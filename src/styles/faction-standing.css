@@ -1,13 +1,13 @@
 /*
- * Tidy Renown
+ * Faction Standing
  * Inside Tidy sheets every color comes from Tidy's theme variables (--t5e-*),
  * so light/dark mode and the sheet accent color are inherited automatically.
  * The faction manager is not a Tidy sheet, so it falls back to Foundry's
  * core theme variables. No absolute colors are used outside of fallbacks.
  */
 
-.tidy-renown-tab,
-.tidy-renown-manager {
+.faction-standing-tab,
+.faction-standing-manager {
   --tr-text: var(--t5e-color-text-default, var(--color-text-primary, currentColor));
   --tr-muted: var(--t5e-color-text-lighter, var(--color-text-secondary, currentColor));
   --tr-accent: var(--t5e-theme-color-default, var(--color-warm-2, currentColor));
@@ -26,26 +26,26 @@
 
 /* ---------- Shared bits ---------- */
 
-.tidy-renown-tab .tr-muted,
-.tidy-renown-manager .tr-muted {
+.faction-standing-tab .tr-muted,
+.faction-standing-manager .tr-muted {
   color: var(--tr-muted);
   font-size: 0.85em;
 }
 
-.tidy-renown-tab .tr-danger,
-.tidy-renown-manager .tr-danger {
+.faction-standing-tab .tr-danger,
+.faction-standing-manager .tr-danger {
   color: var(--tr-danger);
 }
 
-.tidy-renown-tab .tr-section-title {
+.faction-standing-tab .tr-section-title {
   margin: 0.5rem 0 0;
   font-size: 0.95rem;
   border-bottom: 1px solid var(--tr-border);
   padding-bottom: 0.125rem;
 }
 
-.tidy-renown-tab .tr-empty,
-.tidy-renown-manager .tr-empty {
+.faction-standing-tab .tr-empty,
+.faction-standing-manager .tr-empty {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -57,17 +57,17 @@
   border-radius: var(--tr-radius);
 }
 
-.tidy-renown-tab .tr-empty > i,
-.tidy-renown-manager .tr-empty > i {
+.faction-standing-tab .tr-empty > i,
+.faction-standing-manager .tr-empty > i {
   font-size: 1.75rem;
 }
 
-.tidy-renown-tab .tr-empty p,
-.tidy-renown-manager .tr-empty p {
+.faction-standing-tab .tr-empty p,
+.faction-standing-manager .tr-empty p {
   margin: 0;
 }
 
-.tidy-renown-tab .tr-pill {
+.faction-standing-tab .tr-pill {
   display: inline-flex;
   align-items: center;
   padding: 0 0.5rem;
@@ -79,51 +79,51 @@
   color: var(--tr-muted);
 }
 
-.tidy-renown-tab .tr-pill-rank {
+.faction-standing-tab .tr-pill-rank {
   color: var(--tr-gold);
   border-color: var(--tr-gold);
   font-weight: bold;
 }
 
-.tidy-renown-tab .tr-pill-hostile {
+.faction-standing-tab .tr-pill-hostile {
   color: var(--tr-danger);
   border-color: var(--tr-danger);
 }
 
-.tidy-renown-tab .tr-pill-friendly {
+.faction-standing-tab .tr-pill-friendly {
   color: var(--tr-success);
   border-color: var(--tr-success);
 }
 
-.tidy-renown-tab .tr-rich-text,
-.tidy-renown-manager .tr-rich-text {
+.faction-standing-tab .tr-rich-text,
+.faction-standing-manager .tr-rich-text {
   font-size: 0.9em;
 }
 
-.tidy-renown-tab .tr-rich-text > :first-child,
-.tidy-renown-manager .tr-rich-text > :first-child {
+.faction-standing-tab .tr-rich-text > :first-child,
+.faction-standing-manager .tr-rich-text > :first-child {
   margin-block-start: 0;
 }
 
-.tidy-renown-tab .tr-rich-text > :last-child,
-.tidy-renown-manager .tr-rich-text > :last-child {
+.faction-standing-tab .tr-rich-text > :last-child,
+.faction-standing-manager .tr-rich-text > :last-child {
   margin-block-end: 0;
 }
 
 /* Rows: list of actors with an avatar, a name and trailing controls. */
 
-.tidy-renown-tab .tr-rows,
-.tidy-renown-tab .tr-chips,
-.tidy-renown-manager .tr-rows,
-.tidy-renown-manager .tr-faction-list,
-.tidy-renown-manager .tr-rank-list {
+.faction-standing-tab .tr-rows,
+.faction-standing-tab .tr-chips,
+.faction-standing-manager .tr-rows,
+.faction-standing-manager .tr-faction-list,
+.faction-standing-manager .tr-rank-list {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.tidy-renown-tab .tr-row,
-.tidy-renown-manager .tr-row {
+.faction-standing-tab .tr-row,
+.faction-standing-manager .tr-row {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -131,13 +131,13 @@
   border-radius: var(--tr-radius);
 }
 
-.tidy-renown-tab .tr-row:hover,
-.tidy-renown-manager .tr-row:hover {
+.faction-standing-tab .tr-row:hover,
+.faction-standing-manager .tr-row:hover {
   background: var(--tr-hover);
 }
 
-.tidy-renown-tab .tr-row-img,
-.tidy-renown-manager .tr-row-img {
+.faction-standing-tab .tr-row-img,
+.faction-standing-manager .tr-row-img {
   inline-size: 1.75rem;
   block-size: 1.75rem;
   flex: 0 0 auto;
@@ -146,8 +146,8 @@
   border-radius: 50%;
 }
 
-.tidy-renown-tab .tr-row-name,
-.tidy-renown-manager .tr-row-name {
+.faction-standing-tab .tr-row-name,
+.faction-standing-manager .tr-row-name {
   flex: 1 1 auto;
   min-inline-size: 0;
   overflow: hidden;
@@ -158,8 +158,8 @@
 
 /* Score stepper: [−][ 12 ][+] reads as one control. */
 
-.tidy-renown-tab .tr-stepper,
-.tidy-renown-manager .tr-stepper {
+.faction-standing-tab .tr-stepper,
+.faction-standing-manager .tr-stepper {
   display: inline-flex;
   flex: 0 0 auto;
   align-items: stretch;
@@ -170,8 +170,8 @@
   background: var(--tr-field);
 }
 
-.tidy-renown-tab .tr-stepper button,
-.tidy-renown-manager .tr-stepper button {
+.faction-standing-tab .tr-stepper button,
+.faction-standing-manager .tr-stepper button {
   flex: 0 0 auto;
   inline-size: 1.75rem;
   block-size: auto;
@@ -186,14 +186,14 @@
   font-weight: bold;
 }
 
-.tidy-renown-tab .tr-stepper button:hover,
-.tidy-renown-manager .tr-stepper button:hover {
+.faction-standing-tab .tr-stepper button:hover,
+.faction-standing-manager .tr-stepper button:hover {
   background: var(--tr-hover);
   color: var(--tr-text);
 }
 
-.tidy-renown-tab .tr-stepper input,
-.tidy-renown-manager .tr-stepper input {
+.faction-standing-tab .tr-stepper input,
+.faction-standing-manager .tr-stepper input {
   inline-size: 3rem;
   block-size: auto;
   margin: 0;
@@ -208,22 +208,22 @@
   -moz-appearance: textfield;
 }
 
-.tidy-renown-tab .tr-stepper input::-webkit-inner-spin-button,
-.tidy-renown-tab .tr-stepper input::-webkit-outer-spin-button,
-.tidy-renown-manager .tr-stepper input::-webkit-inner-spin-button,
-.tidy-renown-manager .tr-stepper input::-webkit-outer-spin-button {
+.faction-standing-tab .tr-stepper input::-webkit-inner-spin-button,
+.faction-standing-tab .tr-stepper input::-webkit-outer-spin-button,
+.faction-standing-manager .tr-stepper input::-webkit-inner-spin-button,
+.faction-standing-manager .tr-stepper input::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-.tidy-renown-tab .tr-negative .tr-stepper input,
-.tidy-renown-manager .tr-negative .tr-stepper input {
+.faction-standing-tab .tr-negative .tr-stepper input,
+.faction-standing-manager .tr-negative .tr-stepper input {
   color: var(--tr-danger);
 }
 
 /* ---------- Tidy tabs ---------- */
 
-.tidy-renown-tab .tr-tab {
+.faction-standing-tab .tr-tab {
   display: flex;
   flex-direction: column;
   gap: var(--tr-gap);
@@ -236,13 +236,13 @@
  * (sidebar + column), which shrank this tab to its content's width.
  * As a column, the section stretches to the full width and height.
  */
-.tidy5e-sheet .tidy-tab.tidy-renown-tab.active {
+.tidy5e-sheet .tidy-tab.faction-standing-tab.active {
   display: flex;
   flex-direction: column;
   min-block-size: 0;
 }
 
-.tidy-renown-tab .tr-tab {
+.faction-standing-tab .tr-tab {
   flex: 1 0 auto;
   box-sizing: border-box;
   inline-size: 100%;
@@ -250,7 +250,7 @@
 }
 
 /* Party sheets do not scroll the tab container, so the section scrolls itself. */
-.tidy5e-sheet:is(.group, .encounter) .tidy-renown-tab .tr-tab {
+.tidy5e-sheet:is(.group, .encounter) .faction-standing-tab .tr-tab {
   flex: 1 1 0;
   min-block-size: 0;
   overflow-y: auto;
@@ -263,39 +263,39 @@
  * even before (or without) the tab re-rendering. Sheets without the class
  * show the controls (GM only; players never get them in the markup).
  */
-.tidy-renown-tab .tr-contents {
+.faction-standing-tab .tr-contents {
   display: contents;
 }
 
-.sheet-mode-play .tidy-renown-tab .tr-edit-only {
+.sheet-mode-play .faction-standing-tab .tr-edit-only {
   display: none !important;
 }
 
-.tidy-renown-tab .tr-locked-only:not(.sheet-mode-play *) {
+.faction-standing-tab .tr-locked-only:not(.sheet-mode-play *) {
   display: none !important;
 }
 
 /* A card whose only toggle is the (empty) notes one has no footer when locked. */
-.sheet-mode-play .tidy-renown-tab .tr-card-toggles:not(:has(.tr-toggle:not(.tr-edit-only))) {
+.sheet-mode-play .faction-standing-tab .tr-card-toggles:not(:has(.tr-toggle:not(.tr-edit-only))) {
   display: none;
 }
 
 /* Faction cards fill the width: one column on narrow sheets, more on wide ones. */
-.tidy-renown-tab .tr-card-grid {
+.faction-standing-tab .tr-card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
   align-items: start;
   gap: var(--tr-gap);
 }
 
-.tidy-renown-tab .tr-tab-header {
+.faction-standing-tab .tr-tab-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--tr-gap);
 }
 
-.tidy-renown-tab .tr-title {
+.faction-standing-tab .tr-title {
   margin: 0;
   display: flex;
   align-items: center;
@@ -303,7 +303,7 @@
   font-size: 1.1rem;
 }
 
-.tidy-renown-tab .tr-card {
+.faction-standing-tab .tr-card {
   display: flex;
   flex-direction: column;
   gap: 0.375rem;
@@ -314,13 +314,13 @@
   border-radius: var(--tr-radius);
 }
 
-.tidy-renown-tab .tr-card-head {
+.faction-standing-tab .tr-card-head {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.tidy-renown-tab .tr-faction-img {
+.faction-standing-tab .tr-faction-img {
   inline-size: 2.25rem;
   block-size: 2.25rem;
   flex: 0 0 auto;
@@ -329,21 +329,21 @@
   border-radius: var(--tr-radius);
 }
 
-.tidy-renown-tab .tr-faction-img-placeholder {
+.faction-standing-tab .tr-faction-img-placeholder {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   color: var(--tr-faction-color, var(--tr-accent));
 }
 
-.tidy-renown-tab .tr-card-titles {
+.faction-standing-tab .tr-card-titles {
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
   min-inline-size: 0;
 }
 
-.tidy-renown-tab .tr-card-name {
+.faction-standing-tab .tr-card-name {
   margin: 0;
   font-size: 1rem;
   overflow: hidden;
@@ -352,25 +352,25 @@
 }
 
 /* Secondary actions stay quiet until the card is hovered or focused. */
-.tidy-renown-tab .tr-card-actions {
+.faction-standing-tab .tr-card-actions {
   display: inline-flex;
   flex: 0 0 auto;
   opacity: 0.45;
   transition: opacity var(--t5e-transition-default, 150ms ease);
 }
 
-.tidy-renown-tab .tr-card:hover .tr-card-actions,
-.tidy-renown-tab .tr-card-actions:focus-within {
+.faction-standing-tab .tr-card:hover .tr-card-actions,
+.faction-standing-tab .tr-card-actions:focus-within {
   opacity: 1;
 }
 
-.tidy-renown-tab .tr-card-progress {
+.faction-standing-tab .tr-card-progress {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.tidy-renown-tab .tr-meter {
+.faction-standing-tab .tr-meter {
   position: relative;
   flex: 1 1 auto;
   block-size: 1.25rem;
@@ -380,18 +380,18 @@
   overflow: hidden;
 }
 
-.tidy-renown-tab .tr-meter-fill {
+.faction-standing-tab .tr-meter-fill {
   block-size: 100%;
   background: var(--tr-faction-color, var(--tr-accent));
   opacity: 0.85;
   transition: width var(--t5e-transition-default, 150ms ease);
 }
 
-.tidy-renown-tab .tr-negative .tr-meter-fill {
+.faction-standing-tab .tr-negative .tr-meter-fill {
   background: var(--tr-danger);
 }
 
-.tidy-renown-tab .tr-meter-label {
+.faction-standing-tab .tr-meter-label {
   position: absolute;
   inset: 0;
   display: flex;
@@ -403,7 +403,7 @@
   text-shadow: 0 0 3px var(--tr-card);
 }
 
-.tidy-renown-tab .tr-delta {
+.faction-standing-tab .tr-delta {
   min-inline-size: 2rem;
   padding-inline: 0.375rem;
   font-variant-numeric: tabular-nums;
@@ -411,7 +411,7 @@
 
 /* Card footer: one toggle per kind of content (benefits / about / notes). */
 
-.tidy-renown-tab .tr-card-toggles {
+.faction-standing-tab .tr-card-toggles {
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem;
@@ -419,7 +419,7 @@
   border-block-start: 1px solid var(--tr-track);
 }
 
-.tidy-renown-tab .tr-toggle {
+.faction-standing-tab .tr-toggle {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
@@ -438,18 +438,18 @@
   cursor: pointer;
 }
 
-.tidy-renown-tab .tr-toggle:hover {
+.faction-standing-tab .tr-toggle:hover {
   background: var(--tr-hover);
   color: var(--tr-text);
 }
 
-.tidy-renown-tab .tr-toggle[aria-expanded="true"] {
+.faction-standing-tab .tr-toggle[aria-expanded="true"] {
   border-color: var(--tr-faction-color, var(--tr-accent));
   color: var(--tr-text);
   background: var(--tr-hover);
 }
 
-.tidy-renown-tab .tr-toggle-count {
+.faction-standing-tab .tr-toggle-count {
   padding: 0 0.3rem;
   border-radius: 999px;
   background: var(--tr-track);
@@ -458,7 +458,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-.tidy-renown-tab .tr-panel {
+.faction-standing-tab .tr-panel {
   display: flex;
   flex-direction: column;
   gap: 0.375rem;
@@ -467,11 +467,11 @@
   background: var(--tr-hover);
 }
 
-.tidy-renown-tab .tr-panel[hidden] {
+.faction-standing-tab .tr-panel[hidden] {
   display: none;
 }
 
-.tidy-renown-tab .tr-benefits {
+.faction-standing-tab .tr-benefits {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -480,7 +480,7 @@
   list-style: none;
 }
 
-.tidy-renown-tab .tr-benefit {
+.faction-standing-tab .tr-benefit {
   display: flex;
   flex-direction: column;
   gap: 0.125rem;
@@ -488,7 +488,7 @@
   border-inline-start: 2px solid var(--tr-gold);
 }
 
-.tidy-renown-tab .tr-benefit-rank {
+.faction-standing-tab .tr-benefit-rank {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
@@ -497,42 +497,42 @@
   font-size: 0.85rem;
 }
 
-.tidy-renown-tab .tr-notes-head {
+.faction-standing-tab .tr-notes-head {
   display: flex;
   justify-content: flex-end;
   margin-block: -0.25rem -0.5rem;
 }
 
-.tidy-renown-tab .tr-notes p.tr-muted {
+.faction-standing-tab .tr-notes p.tr-muted {
   margin: 0;
   font-style: italic;
 }
 
-.tidy-renown-tab .tr-score {
+.faction-standing-tab .tr-score {
   min-inline-size: 2rem;
   text-align: end;
   font-weight: bold;
   font-variant-numeric: tabular-nums;
 }
 
-.tidy-renown-tab .tr-score-neg {
+.faction-standing-tab .tr-score-neg {
   color: var(--tr-danger);
 }
 
-.tidy-renown-tab .tr-add-row {
+.faction-standing-tab .tr-add-row {
   display: flex;
   align-items: center;
   gap: 0.375rem;
 }
 
-.tidy-renown-tab .tr-add-row select {
+.faction-standing-tab .tr-add-row select {
   flex: 1 1 auto;
   min-inline-size: 0;
 }
 
 /* NPC tab */
 
-.tidy-renown-tab .tr-standing {
+.faction-standing-tab .tr-standing {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -544,33 +544,33 @@
   border-radius: var(--tr-radius);
 }
 
-.tidy-renown-tab .tr-standing-hostile {
+.faction-standing-tab .tr-standing-hostile {
   border-color: var(--tr-danger);
 }
 
-.tidy-renown-tab .tr-standing-friendly {
+.faction-standing-tab .tr-standing-friendly {
   border-color: var(--tr-success);
 }
 
-.tidy-renown-tab .tr-standing-main,
-.tidy-renown-tab .tr-standing-controls {
+.faction-standing-tab .tr-standing-main,
+.faction-standing-tab .tr-standing-controls {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.tidy-renown-tab .tr-standing-score {
+.faction-standing-tab .tr-standing-score {
   font-size: 1.25rem;
   font-variant-numeric: tabular-nums;
 }
 
-.tidy-renown-tab .tr-chips {
+.faction-standing-tab .tr-chips {
   display: flex;
   flex-wrap: wrap;
   gap: 0.375rem;
 }
 
-.tidy-renown-tab .tr-chip {
+.faction-standing-tab .tr-chip {
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
@@ -579,7 +579,7 @@
   border-radius: 999px;
 }
 
-.tidy-renown-tab .tr-chip img {
+.faction-standing-tab .tr-chip img {
   inline-size: 1.25rem;
   block-size: 1.25rem;
   border: none;
@@ -589,23 +589,23 @@
 
 /* ---------- Faction manager and its dialogs (Foundry windows) ---------- */
 
-.tidy-renown-manager .window-content {
+.faction-standing-manager .window-content {
   padding: 0;
   overflow: hidden;
 }
 
-.tidy-renown-manager button {
+.faction-standing-manager button {
   flex: 0 0 auto;
   inline-size: auto;
   white-space: nowrap;
 }
 
-.tidy-renown-manager .tr-primary {
+.faction-standing-manager .tr-primary {
   border-color: var(--tr-accent);
   font-weight: 600;
 }
 
-.tidy-renown-manager .tr-icon-button {
+.faction-standing-manager .tr-icon-button {
   inline-size: 1.75rem;
   block-size: 1.75rem;
   min-block-size: 0;
@@ -618,15 +618,15 @@
   box-shadow: none;
 }
 
-.tidy-renown-manager .tr-icon-button:hover {
+.faction-standing-manager .tr-icon-button:hover {
   background: var(--tr-hover);
 }
 
-.tidy-renown-manager .tr-icon-button.tr-active {
+.faction-standing-manager .tr-icon-button.tr-active {
   color: var(--tr-success);
 }
 
-.tidy-renown-manager .tr-stack {
+.faction-standing-manager .tr-stack {
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
@@ -634,13 +634,13 @@
   line-height: 1.25;
 }
 
-.tidy-renown-manager .tr-stack > * {
+.faction-standing-manager .tr-stack > * {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.tidy-renown-manager .tr-avatar {
+.faction-standing-manager .tr-avatar {
   inline-size: 2.25rem;
   block-size: 2.25rem;
   flex: 0 0 auto;
@@ -649,14 +649,14 @@
   border-radius: var(--tr-radius);
 }
 
-.tidy-renown-manager .tr-avatar-placeholder {
+.faction-standing-manager .tr-avatar-placeholder {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   color: var(--tr-faction-color, var(--tr-accent));
 }
 
-.tidy-renown-manager .tr-count {
+.faction-standing-manager .tr-count {
   padding: 0 0.375rem;
   border-radius: 999px;
   background: var(--tr-track);
@@ -666,58 +666,58 @@
   color: var(--tr-muted);
 }
 
-.tidy-renown-manager .tr-toolbar,
-.tidy-renown-manager .tr-actions {
+.faction-standing-manager .tr-toolbar,
+.faction-standing-manager .tr-actions {
   display: flex;
   align-items: center;
   gap: 0.375rem;
 }
 
-.tidy-renown-manager .tr-toolbar > p {
+.faction-standing-manager .tr-toolbar > p {
   flex: 1 1 auto;
   margin: 0;
 }
 
-.tidy-renown-manager .tr-actions {
+.faction-standing-manager .tr-actions {
   justify-content: flex-end;
   margin-block-start: auto;
 }
 
-.tidy-renown-manager .tr-search {
+.faction-standing-manager .tr-search {
   flex: 1 1 auto;
   min-inline-size: 0;
 }
 
-.tidy-renown-manager .form-group {
+.faction-standing-manager .form-group {
   margin: 0;
 }
 
-.tidy-renown-manager .tr-form-grid {
+.faction-standing-manager .tr-form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.75rem 1rem;
 }
 
-.tidy-renown-manager .tr-form-grid .form-group {
+.faction-standing-manager .tr-form-grid .form-group {
   flex-direction: column;
   align-items: stretch;
   gap: 0.25rem;
 }
 
-.tidy-renown-manager .tr-form-grid .form-group > label {
+.faction-standing-manager .tr-form-grid .form-group > label {
   flex: none;
   font-weight: 600;
 }
 
-.tidy-renown-manager .tr-form-grid .hint {
+.faction-standing-manager .tr-form-grid .hint {
   margin: 0;
 }
 
-.tidy-renown-manager .tr-rich-field > label {
+.faction-standing-manager .tr-rich-field > label {
   font-weight: 600;
 }
 
-.tidy-renown-manager .tr-rich-field prose-mirror {
+.faction-standing-manager .tr-rich-field prose-mirror {
   min-block-size: 8rem;
   border: 1px solid var(--tr-border);
   border-radius: var(--tr-radius);
@@ -726,13 +726,13 @@
 
 /* Layout: faction sidebar + selected faction */
 
-.tidy-renown-manager .tr-layout {
+.faction-standing-manager .tr-layout {
   display: flex;
   block-size: 100%;
   container-type: inline-size;
 }
 
-.tidy-renown-manager .tr-sidebar {
+.faction-standing-manager .tr-sidebar {
   display: flex;
   flex-direction: column;
   flex: 0 0 15rem;
@@ -741,34 +741,34 @@
   background: var(--tr-card);
 }
 
-.tidy-renown-manager .tr-sidebar > .tr-toolbar {
+.faction-standing-manager .tr-sidebar > .tr-toolbar {
   padding: 0.625rem;
   border-block-end: 1px solid var(--tr-border);
 }
 
-.tidy-renown-manager .tr-grow {
+.faction-standing-manager .tr-grow {
   flex: 1 1 auto;
 }
 
-.tidy-renown-manager .tr-faction-list {
+.faction-standing-manager .tr-faction-list {
   flex: 1 1 auto;
   min-block-size: 0;
   overflow-y: auto;
   padding: 0.375rem;
 }
 
-.tidy-renown-manager .tr-faction-item {
+.faction-standing-manager .tr-faction-item {
   margin-block-end: 0.125rem;
   border-inline-start: 3px solid transparent;
   border-radius: var(--tr-radius);
 }
 
-.tidy-renown-manager .tr-faction-item.active {
+.faction-standing-manager .tr-faction-item.active {
   border-inline-start-color: var(--tr-faction-color, var(--tr-accent));
   background: var(--tr-hover);
 }
 
-.tidy-renown-manager .tr-faction-open {
+.faction-standing-manager .tr-faction-open {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -781,23 +781,23 @@
   text-align: start;
 }
 
-.tidy-renown-manager .tr-faction-open:hover {
+.faction-standing-manager .tr-faction-open:hover {
   background: var(--tr-hover);
 }
 
-.tidy-renown-manager .tr-faction-open .tr-avatar {
+.faction-standing-manager .tr-faction-open .tr-avatar {
   inline-size: 2rem;
   block-size: 2rem;
 }
 
-.tidy-renown-manager .tr-main {
+.faction-standing-manager .tr-main {
   flex: 1 1 auto;
   min-inline-size: 0;
   display: flex;
   flex-direction: column;
 }
 
-.tidy-renown-manager .tr-main-empty {
+.faction-standing-manager .tr-main-empty {
   margin: auto;
   max-inline-size: 24rem;
   border: none;
@@ -805,15 +805,15 @@
 
 /* Narrow window: the sidebar shrinks to avatars only. */
 @container (max-width: 640px) {
-  .tidy-renown-manager .tr-sidebar {
+  .faction-standing-manager .tr-sidebar {
     flex-basis: 3.5rem;
   }
 
-  .tidy-renown-manager .tr-sidebar-label {
+  .faction-standing-manager .tr-sidebar-label {
     display: none;
   }
 
-  .tidy-renown-manager .tr-faction-open {
+  .faction-standing-manager .tr-faction-open {
     justify-content: center;
     padding-inline: 0;
   }
@@ -821,14 +821,14 @@
 
 /* Detail view: header, tabs, scrolling tab body */
 
-.tidy-renown-manager .tr-detail {
+.faction-standing-manager .tr-detail {
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
   min-block-size: 0;
 }
 
-.tidy-renown-manager .tr-detail-header {
+.faction-standing-manager .tr-detail-header {
   display: flex;
   align-items: center;
   gap: 0.625rem;
@@ -837,18 +837,18 @@
   border-block-start: 3px solid var(--tr-faction-color, transparent);
 }
 
-.tidy-renown-manager .tr-detail-name {
+.faction-standing-manager .tr-detail-name {
   font-size: 1.1rem;
 }
 
-.tidy-renown-manager .tr-tabs {
+.faction-standing-manager .tr-tabs {
   display: flex;
   gap: 0.25rem;
   padding: 0 0.75rem;
   border-block-end: 1px solid var(--tr-border);
 }
 
-.tidy-renown-manager .tr-tabs > a {
+.faction-standing-manager .tr-tabs > a {
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
@@ -859,17 +859,17 @@
   text-shadow: none;
 }
 
-.tidy-renown-manager .tr-tabs > a:hover {
+.faction-standing-manager .tr-tabs > a:hover {
   color: var(--tr-text);
 }
 
-.tidy-renown-manager .tr-tabs > a.active {
+.faction-standing-manager .tr-tabs > a.active {
   color: var(--tr-text);
   border-block-end-color: var(--tr-faction-color, var(--tr-accent));
   font-weight: 600;
 }
 
-.tidy-renown-manager .tr-tab-body {
+.faction-standing-manager .tr-tab-body {
   flex: 1 1 auto;
   min-block-size: 0;
   flex-direction: column;
@@ -878,19 +878,19 @@
   overflow-y: auto;
 }
 
-.tidy-renown-manager .tr-tab-body:not(.active) {
+.faction-standing-manager .tr-tab-body:not(.active) {
   display: none;
 }
 
-.tidy-renown-manager .tr-tab-body.active {
+.faction-standing-manager .tr-tab-body.active {
   display: flex;
 }
 
-.tidy-renown-manager .tr-flush {
+.faction-standing-manager .tr-flush {
   margin: 0;
 }
 
-.tidy-renown-manager .tr-warning {
+.faction-standing-manager .tr-warning {
   display: flex;
   gap: 0.5rem;
   align-items: baseline;
@@ -901,25 +901,25 @@
   color: var(--tr-danger);
 }
 
-.tidy-renown-manager .tr-advanced > summary {
+.faction-standing-manager .tr-advanced > summary {
   cursor: pointer;
   color: var(--tr-muted);
   font-size: 0.9em;
 }
 
-.tidy-renown-manager .tr-advanced[open] > summary {
+.faction-standing-manager .tr-advanced[open] > summary {
   margin-block-end: 0.5rem;
 }
 
 /* Ranks */
 
-.tidy-renown-manager .tr-rank-list {
+.faction-standing-manager .tr-rank-list {
   display: flex;
   flex-direction: column;
   gap: 0.375rem;
 }
 
-.tidy-renown-manager .tr-rank {
+.faction-standing-manager .tr-rank {
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
@@ -929,16 +929,16 @@
   border-radius: var(--tr-radius);
 }
 
-.tidy-renown-manager .tr-rank.tr-duplicate {
+.faction-standing-manager .tr-rank.tr-duplicate {
   border-color: var(--tr-danger);
 }
 
-.tidy-renown-manager .tr-duplicate .tr-rank-score {
+.faction-standing-manager .tr-duplicate .tr-rank-score {
   border-color: var(--tr-danger);
   color: var(--tr-danger);
 }
 
-.tidy-renown-manager .tr-rank-score {
+.faction-standing-manager .tr-rank-score {
   flex: 0 0 auto;
   min-inline-size: 2.5rem;
   padding: 0.125rem 0.375rem;
@@ -950,7 +950,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-.tidy-renown-manager .tr-rank-body {
+.faction-standing-manager .tr-rank-body {
   flex: 1 1 auto;
   min-inline-size: 0;
   display: flex;
@@ -958,7 +958,7 @@
   gap: 0.125rem;
 }
 
-.tidy-renown-manager .tr-clamp {
+.faction-standing-manager .tr-clamp {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -967,7 +967,7 @@
   color: var(--tr-muted);
 }
 
-.tidy-renown-manager .tr-row-actions {
+.faction-standing-manager .tr-row-actions {
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
@@ -975,14 +975,14 @@
 
 /* Members, grouped by folder */
 
-.tidy-renown-manager .tr-member-list,
-.tidy-renown-manager .tr-picker-list {
+.faction-standing-manager .tr-member-list,
+.faction-standing-manager .tr-picker-list {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
 }
 
-.tidy-renown-manager .tr-folder-title {
+.faction-standing-manager .tr-folder-title {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -994,45 +994,45 @@
   color: var(--tr-muted);
 }
 
-.tidy-renown-manager .tr-folder-title::-webkit-details-marker {
+.faction-standing-manager .tr-folder-title::-webkit-details-marker {
   display: none;
 }
 
-.tidy-renown-manager .tr-folder-title:hover {
+.faction-standing-manager .tr-folder-title:hover {
   background: var(--tr-hover);
 }
 
-.tidy-renown-manager .tr-folder-title > span:first-of-type {
+.faction-standing-manager .tr-folder-title > span:first-of-type {
   flex: 1 1 auto;
 }
 
-.tidy-renown-manager .tr-folder:not([open]) .tr-folder-opened,
-.tidy-renown-manager .tr-folder[open] .tr-folder-closed {
+.faction-standing-manager .tr-folder:not([open]) .tr-folder-opened,
+.faction-standing-manager .tr-folder[open] .tr-folder-closed {
   display: none;
 }
 
-.tidy-renown-manager .tr-folder > .tr-rows {
+.faction-standing-manager .tr-folder > .tr-rows {
   margin-inline-start: 0.75rem;
   padding-inline-start: 0.5rem;
   border-inline-start: 1px solid var(--tr-track);
 }
 
-.tidy-renown-manager .tr-row-name.tr-stack {
+.faction-standing-manager .tr-row-name.tr-stack {
   cursor: pointer;
 }
 
 /* Fixed-width checkbox column so rows with and without one stay aligned. */
-.tidy-renown-manager .tr-check {
+.faction-standing-manager .tr-check {
   flex: 0 0 1rem;
   inline-size: 1rem;
   margin: 0;
 }
 
-.tidy-renown-manager .tr-has-notes {
+.faction-standing-manager .tr-has-notes {
   color: var(--tr-gold);
 }
 
-.tidy-renown-manager .tr-bulk-bar {
+.faction-standing-manager .tr-bulk-bar {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -1042,33 +1042,33 @@
   background: var(--tr-hover);
 }
 
-.tidy-renown-manager .tr-bulk-bar[hidden] {
+.faction-standing-manager .tr-bulk-bar[hidden] {
   display: none;
 }
 
-.tidy-renown-manager .tr-push {
+.faction-standing-manager .tr-push {
   margin-inline-start: auto;
 }
 
-.tidy-renown-manager .tr-dropzone.tr-drag-over {
+.faction-standing-manager .tr-dropzone.tr-drag-over {
   outline: 2px dashed var(--tr-accent);
   outline-offset: -4px;
 }
 
-.tidy-renown-manager .tr-drop-hint {
+.faction-standing-manager .tr-drop-hint {
   margin: auto 0 0;
   text-align: center;
 }
 
 /* Dialogs (rank editor, actor picker) */
 
-.tidy-renown-manager .tr-dialog {
+.faction-standing-manager .tr-dialog {
   display: flex;
   flex-direction: column;
   block-size: 100%;
 }
 
-.tidy-renown-manager .tr-dialog-body {
+.faction-standing-manager .tr-dialog-body {
   flex: 1 1 auto;
   min-block-size: 0;
   display: flex;
@@ -1077,15 +1077,15 @@
   padding: 0.75rem;
 }
 
-.tidy-renown-manager .tr-rank-head {
+.faction-standing-manager .tr-rank-head {
   grid-template-columns: 9rem minmax(0, 1fr);
 }
 
-.tidy-renown-manager .tr-dialog-body prose-mirror {
+.faction-standing-manager .tr-dialog-body prose-mirror {
   min-block-size: 14rem;
 }
 
-.tidy-renown-manager .tr-dialog-footer {
+.faction-standing-manager .tr-dialog-footer {
   display: flex;
   justify-content: flex-end;
   gap: 0.375rem;
@@ -1093,37 +1093,47 @@
   border-block-start: 1px solid var(--tr-border);
 }
 
-.tidy-renown-manager .tr-picker-list {
+.faction-standing-manager .tr-picker-list {
   flex: 1 1 auto;
   min-block-size: 0;
   overflow-y: auto;
 }
 
-.tidy-renown-manager .tr-picker .hint {
+.faction-standing-manager .tr-picker .hint {
   margin: 0;
 }
 
-.tidy-renown-manager .tr-pick {
+.faction-standing-manager .tr-pick {
   cursor: pointer;
 }
 
-.tidy-renown-manager .tr-pick input,
-.tidy-renown-manager .tr-folder-title input {
+.faction-standing-manager .tr-pick input,
+.faction-standing-manager .tr-folder-title input {
   flex: 0 0 auto;
   margin: 0;
 }
 
 @media (max-width: 520px) {
-  .tidy-renown-manager .tr-form-grid {
+  .faction-standing-manager .tr-form-grid {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .tidy-renown-manager .tr-row {
+  .faction-standing-manager .tr-row {
     flex-wrap: wrap;
   }
 }
 
 /* Actor directory button */
-.tidy-renown-open {
+.faction-standing-open {
   flex: 1 0 100%;
+}
+
+/* ---------- Relations tab on the dnd5e sheets ---------- */
+
+.faction-standing-sheet-tab .faction-standing-tab {
+  --tr-accent: var(--dnd5e-color-gold, var(--color-warm-2, currentColor));
+  --tr-gold: var(--dnd5e-color-gold, var(--tr-accent));
+  --tr-border: var(--dnd5e-color-faint, var(--color-border, currentColor));
+  --tr-card: var(--dnd5e-color-card, color-mix(in srgb, currentColor 5%, transparent));
+  padding: 0.5rem 0.75rem 1rem;
 }

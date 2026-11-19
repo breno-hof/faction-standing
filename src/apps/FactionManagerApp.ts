@@ -22,6 +22,7 @@ import {
   saveFaction,
 } from "../data/factions.js";
 import { groupByFolder } from "../data/folders.js";
+import { kindLabel, kindOptions } from "../data/kinds.js";
 import { getFactionNpcs, getFactionRelations, getMembers } from "../data/membership-index.js";
 import {
   adjustScore,
@@ -50,13 +51,11 @@ import { openNotesEditor } from "./NotesEditorApp.js";
 const t = (key: string, data?: Record<string, unknown>): string =>
   data ? game.i18n.format(key, data) : game.i18n.localize(key);
 
-const KINDS = ["faction", "organization", "community"] as const;
-
 let ManagerClass: any = null;
 let instance: any = null;
 
 function typeLabel(actor: any): string {
-  return t(`TIDY_RENOWN.ActorType.${actor.type}`);
+  return t(`FACTION_STANDING.ActorType.${actor.type}`);
 }
 
 function enrich(html: string | undefined): Promise<string> {
@@ -156,17 +155,17 @@ function pickJsonFile(): Promise<string | null> {
 /** Asks how to handle ids that already exist; null means cancel. */
 async function askImportMode(conflicts: number): Promise<ImportMode | null> {
   const choice = await foundry.applications.api.DialogV2.wait({
-    window: { title: t("TIDY_RENOWN.Import.Title"), icon: "fa-solid fa-file-import" },
-    content: `<p>${t("TIDY_RENOWN.Import.Conflict", { n: conflicts })}</p>`,
+    window: { title: t("FACTION_STANDING.Import.Title"), icon: "fa-solid fa-file-import" },
+    content: `<p>${t("FACTION_STANDING.Import.Conflict", { n: conflicts })}</p>`,
     buttons: [
       {
         action: "overwrite",
-        label: t("TIDY_RENOWN.Import.Overwrite"),
+        label: t("FACTION_STANDING.Import.Overwrite"),
         icon: "fa-solid fa-arrows-rotate",
         default: true,
       },
-      { action: "copy", label: t("TIDY_RENOWN.Import.Copy"), icon: "fa-solid fa-copy" },
-      { action: "cancel", label: t("TIDY_RENOWN.Manager.Cancel"), icon: "fa-solid fa-xmark" },
+      { action: "copy", label: t("FACTION_STANDING.Import.Copy"), icon: "fa-solid fa-copy" },
+      { action: "cancel", label: t("FACTION_STANDING.Manager.Cancel"), icon: "fa-solid fa-xmark" },
     ],
     rejectClose: false,
   });
@@ -180,7 +179,7 @@ async function runImport(): Promise<string | null> {
     text = await pickJsonFile();
   } catch (err) {
     console.error(`${MODULE_ID} | could not read the file`, err);
-    ui.notifications.error(t("TIDY_RENOWN.Import.Invalid"));
+    ui.notifications.error(t("FACTION_STANDING.Import.Invalid"));
     return null;
   }
   if (text == null) return null;
@@ -189,7 +188,7 @@ async function runImport(): Promise<string | null> {
     incoming = parseFactionExport(JSON.parse(text), () => foundry.utils.randomID());
   } catch (err) {
     console.warn(`${MODULE_ID} | import failed`, err);
-    ui.notifications.error(t("TIDY_RENOWN.Import.Invalid"));
+    ui.notifications.error(t("FACTION_STANDING.Import.Invalid"));
     return null;
   }
   const conflicts = conflictingIds(incoming).length;
@@ -200,10 +199,10 @@ async function runImport(): Promise<string | null> {
     ids = await importFactions(incoming, mode);
   } catch (err) {
     console.error(`${MODULE_ID} | import failed`, err);
-    ui.notifications.error(t("TIDY_RENOWN.Notify.Error"));
+    ui.notifications.error(t("FACTION_STANDING.Notify.Error"));
     return null;
   }
-  ui.notifications.info(t("TIDY_RENOWN.Import.Done", { n: ids.length }));
+  ui.notifications.info(t("FACTION_STANDING.Import.Done", { n: ids.length }));
   return ids[0] ?? null;
 }
 
@@ -212,7 +211,7 @@ function runExport(factions: FactionDef[]): void {
     exportFactions(factions);
   } catch (err) {
     console.error(`${MODULE_ID} | export failed`, err);
-    ui.notifications.error(t("TIDY_RENOWN.Notify.Error"));
+    ui.notifications.error(t("FACTION_STANDING.Notify.Error"));
   }
 }
 
@@ -251,7 +250,7 @@ function getManagerClass(): any {
     }
 
     get title(): string {
-      return t(this.rankId ? "TIDY_RENOWN.Rank.EditTitle" : "TIDY_RENOWN.Rank.NewTitle");
+      return t(this.rankId ? "FACTION_STANDING.Rank.EditTitle" : "FACTION_STANDING.Rank.NewTitle");
     }
 
     async _prepareContext(options: any): Promise<any> {
@@ -278,12 +277,12 @@ function getManagerClass(): any {
       const data = foundry.utils.expandObject(formData.object).rank ?? {};
       const minScore = Number(data.minScore);
       if (data.minScore === "" || !Number.isFinite(minScore)) {
-        ui.notifications.warn(t("TIDY_RENOWN.Rank.InvalidScore"));
+        ui.notifications.warn(t("FACTION_STANDING.Rank.InvalidScore"));
         return;
       }
       if (faction.ranks.some((r) => r.id !== this.rankId && r.minScore === Math.trunc(minScore))) {
         ui.notifications.warn(
-          t("TIDY_RENOWN.Rank.DuplicateScore", { score: Math.trunc(minScore) }),
+          t("FACTION_STANDING.Rank.DuplicateScore", { score: Math.trunc(minScore) }),
         );
         return;
       }
@@ -308,7 +307,11 @@ function getManagerClass(): any {
     static DEFAULT_OPTIONS = {
       classes: [`${MODULE_ID}-manager`, `${MODULE_ID}-dialog`],
       tag: "form",
-      window: { title: "TIDY_RENOWN.Picker.Title", icon: "fa-solid fa-user-plus", resizable: true },
+      window: {
+        title: "FACTION_STANDING.Picker.Title",
+        icon: "fa-solid fa-user-plus",
+        resizable: true,
+      },
       position: { width: 420, height: 560 },
       form: { handler: ActorPickerApp.#onSubmit, submitOnChange: false, closeOnSubmit: false },
       actions: { cancel: ActorPickerApp.#onCancel },
@@ -344,7 +347,7 @@ function getManagerClass(): any {
       const folders = groupByFolder(
         actors,
         (row: any) => row.actor,
-        t("TIDY_RENOWN.Manager.UnfiledActors"),
+        t("FACTION_STANDING.Manager.UnfiledActors"),
       );
       return { ...context, folders, empty: actors.length === 0 };
     }
@@ -365,7 +368,7 @@ function getManagerClass(): any {
       const submit = root.querySelector<HTMLButtonElement>("button[type='submit']");
       if (!submit) return;
       submit.disabled = n === 0;
-      submit.querySelector("span")!.textContent = t("TIDY_RENOWN.Picker.Add", { n });
+      submit.querySelector("span")!.textContent = t("FACTION_STANDING.Picker.Add", { n });
     }
 
     static async #onSubmit(this: ActorPickerApp, _event: Event, form: HTMLFormElement) {
@@ -386,7 +389,11 @@ function getManagerClass(): any {
       id: `${MODULE_ID}-manager`,
       classes: [`${MODULE_ID}-manager`],
       tag: "form",
-      window: { title: "TIDY_RENOWN.Manager.Title", icon: "fa-solid fa-flag", resizable: true },
+      window: {
+        title: "FACTION_STANDING.Manager.Title",
+        icon: "fa-solid fa-flag",
+        resizable: true,
+      },
       position: { width: 900, height: 680 },
       form: { handler: FactionManagerApp.#onSubmit, submitOnChange: true, closeOnSubmit: false },
       actions: {
@@ -407,6 +414,7 @@ function getManagerClass(): any {
         bulkMember: FactionManagerApp.#onBulkMember,
         bulkClear: FactionManagerApp.#onBulkClear,
         openActor: FactionManagerApp.#onOpenActor,
+        openFactionSheet: FactionManagerApp.#onOpenFactionSheet,
         recalc: FactionManagerApp.#onRecalc,
         importFactions: FactionManagerApp.#onImport,
         exportAll: FactionManagerApp.#onExportAll,
@@ -421,9 +429,13 @@ function getManagerClass(): any {
     static TABS = {
       primary: {
         tabs: [
-          { id: "details", icon: "fa-solid fa-circle-info", label: "TIDY_RENOWN.Manager.Details" },
-          { id: "ranks", icon: "fa-solid fa-medal", label: "TIDY_RENOWN.Manager.Ranks" },
-          { id: "members", icon: "fa-solid fa-users", label: "TIDY_RENOWN.Manager.Members" },
+          {
+            id: "details",
+            icon: "fa-solid fa-circle-info",
+            label: "FACTION_STANDING.Manager.Details",
+          },
+          { id: "ranks", icon: "fa-solid fa-medal", label: "FACTION_STANDING.Manager.Ranks" },
+          { id: "members", icon: "fa-solid fa-users", label: "FACTION_STANDING.Manager.Members" },
         ],
         initial: "details",
       },
@@ -439,7 +451,7 @@ function getManagerClass(): any {
 
     get title(): string {
       const faction = this.selectedId ? getFaction(this.selectedId) : null;
-      const base = t("TIDY_RENOWN.Manager.Title");
+      const base = t("FACTION_STANDING.Manager.Title");
       return faction ? `${base}: ${faction.name}` : base;
     }
 
@@ -466,10 +478,10 @@ function getManagerClass(): any {
       return getFactions().map((f) => ({
         active: false,
         id: f.id,
-        name: f.name || t("TIDY_RENOWN.Faction.Unnamed"),
+        name: f.name || t("FACTION_STANDING.Faction.Unnamed"),
         img: f.img,
         color: f.color,
-        kindLabel: t(`TIDY_RENOWN.Faction.Kind.${f.kind}`),
+        kindLabel: kindLabel(f.kind),
         memberCount: getMembers(f.id).length,
         rankCount: f.ranks.length,
       }));
@@ -502,14 +514,14 @@ function getManagerClass(): any {
         actorId: a.id,
         name: a.name,
         img: a.img,
-        subtitle: t("TIDY_RENOWN.Manager.NpcMember"),
+        subtitle: t("FACTION_STANDING.Manager.NpcMember"),
         filterText: a.name.toLocaleLowerCase(),
         hasScore: false,
       }));
       const memberFolders = groupByFolder(
         [...scoreRows, ...npcRows],
         (row) => row.actor,
-        t("TIDY_RENOWN.Manager.UnfiledActors"),
+        t("FACTION_STANDING.Manager.UnfiledActors"),
       ).map((folder) => ({
         ...folder,
         open: !this.collapsed.has(folder.id),
@@ -530,14 +542,10 @@ function getManagerClass(): any {
 
       return {
         faction,
-        displayName: faction.name || t("TIDY_RENOWN.Faction.Unnamed"),
-        kindLabel: t(`TIDY_RENOWN.Faction.Kind.${faction.kind}`),
+        displayName: faction.name || t("FACTION_STANDING.Faction.Unnamed"),
+        kindLabel: kindLabel(faction.kind),
         descriptionHtml: await enrich(faction.description),
-        kinds: KINDS.map((k) => ({
-          value: k,
-          label: t(`TIDY_RENOWN.Faction.Kind.${k}`),
-          selected: k === faction.kind,
-        })),
+        kinds: kindOptions(faction.kind),
         ranks,
         hasDuplicateRanks: duplicates.size > 0,
         canUseDmg: !dmgThresholdRanks().every((r) => existingScores.has(r.minScore)),
@@ -605,7 +613,7 @@ function getManagerClass(): any {
       const bar = this.element.querySelector(".tr-bulk-bar") as HTMLElement | null;
       if (!bar) return;
       bar.hidden = this.selected.size === 0;
-      bar.querySelector("[data-tr-bulk-count]")!.textContent = t("TIDY_RENOWN.Bulk.Selected", {
+      bar.querySelector("[data-tr-bulk-count]")!.textContent = t("FACTION_STANDING.Bulk.Selected", {
         n: this.selected.size,
       });
     }
@@ -636,7 +644,7 @@ function getManagerClass(): any {
       if (data?.type !== "Actor" || !data.uuid) return;
       const actor = fromUuidSync(data.uuid);
       if (!actor || !(await linkActorToFaction(actor, this.selectedId))) {
-        ui.notifications.warn(t("TIDY_RENOWN.Notify.InvalidActor"));
+        ui.notifications.warn(t("FACTION_STANDING.Notify.InvalidActor"));
       }
     }
 
@@ -697,8 +705,8 @@ function getManagerClass(): any {
       const faction = this.selectedId ? getFaction(this.selectedId) : null;
       if (!faction) return;
       const confirmed = await foundry.applications.api.DialogV2.confirm({
-        window: { title: t("TIDY_RENOWN.Manager.DeleteTitle") },
-        content: `<p>${t("TIDY_RENOWN.Manager.DeleteConfirm", {
+        window: { title: t("FACTION_STANDING.Manager.DeleteTitle") },
+        content: `<p>${t("FACTION_STANDING.Manager.DeleteConfirm", {
           name: foundry.utils.escapeHTML?.(faction.name) ?? faction.name,
         })}</p>`,
       });
@@ -732,8 +740,8 @@ function getManagerClass(): any {
       const rank = faction?.ranks.find((r) => r.id === rankId);
       if (!faction || !rank) return;
       const confirmed = await foundry.applications.api.DialogV2.confirm({
-        window: { title: t("TIDY_RENOWN.Rank.Remove") },
-        content: `<p>${t("TIDY_RENOWN.Rank.RemoveConfirm", {
+        window: { title: t("FACTION_STANDING.Rank.Remove") },
+        content: `<p>${t("FACTION_STANDING.Rank.RemoveConfirm", {
           name: foundry.utils.escapeHTML?.(rankLabel(rank)) ?? rankLabel(rank),
         })}</p>`,
       });
@@ -764,7 +772,8 @@ function getManagerClass(): any {
     static async #onRemoveRelation(this: FactionManagerApp, _event: Event, target: HTMLElement) {
       const actor = game.actors.get(actorIdFrom(target));
       if (!actor || !this.selectedId) return;
-      await removeRelation(actor, factionKey(this.selectedId));
+      const kept = await removeRelation(actor, factionKey(this.selectedId));
+      if (kept) ui.notifications.info(t("FACTION_STANDING.Notify.ManualItemsKept", { n: kept }));
     }
 
     static async #onRemoveNpc(this: FactionManagerApp, _event: Event, target: HTMLElement) {
@@ -805,6 +814,10 @@ function getManagerClass(): any {
       game.actors.get(actorIdFrom(target))?.sheet?.render(true);
     }
 
+    static #onOpenFactionSheet(this: FactionManagerApp) {
+      if (this.selectedId) game.actors.get(this.selectedId)?.sheet?.render(true);
+    }
+
     static async #onImport(this: FactionManagerApp) {
       const id = await runImport();
       if (id) this.#select(id);
@@ -813,7 +826,7 @@ function getManagerClass(): any {
     static #onExportAll() {
       const factions = getFactions();
       if (!factions.length) {
-        ui.notifications.warn(t("TIDY_RENOWN.Export.Empty"));
+        ui.notifications.warn(t("FACTION_STANDING.Export.Empty"));
         return;
       }
       runExport(factions);
@@ -827,7 +840,7 @@ function getManagerClass(): any {
 
     static async #onRecalc() {
       const n = await recalculateAllDispositions(true);
-      ui.notifications.info(t("TIDY_RENOWN.Notify.Recalculated", { n }));
+      ui.notifications.info(t("FACTION_STANDING.Notify.Recalculated", { n }));
     }
   }
 
@@ -838,7 +851,7 @@ function getManagerClass(): any {
 /** Opens (or focuses) the singleton manager, optionally on a faction. GM only. */
 export function openFactionManager(factionId?: string): void {
   if (!game.user.isGM) {
-    ui.notifications.warn(t("TIDY_RENOWN.Notify.GMOnly"));
+    ui.notifications.warn(t("FACTION_STANDING.Notify.GMOnly"));
     return;
   }
   const Cls = getManagerClass();

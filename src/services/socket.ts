@@ -61,7 +61,7 @@ export async function handleIncrease(
 /** Player side: asks the active GM for a +1. */
 export function requestIncrease(actor: any, key: string): void {
   if (!game.users.activeGM) {
-    ui.notifications.warn(game.i18n.localize("TIDY_RENOWN.Notify.NoGM"));
+    ui.notifications.warn(game.i18n.localize("FACTION_STANDING.Notify.NoGM"));
     return;
   }
   const payload: IncreaseRequest = {

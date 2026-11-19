@@ -1,0 +1,57 @@
+{
+  "id": "faction-standing",
+  "title": "Faction Standing",
+  "description": "Faction relations for D&D 5e on top of dnd5e's own renown: ranks and members for faction actors, quick and bulk score changes, individual relations with NPCs and token disposition that follows the party's standing.",
+  "version": "2.0.0",
+  "authors": [
+    {
+      "name": "breno-hof",
+      "url": "https://github.com/breno-hof"
+    }
+  ],
+  "compatibility": {
+    "minimum": "14",
+    "verified": "14"
+  },
+  "esmodules": ["scripts/main.js"],
+  "styles": ["styles/faction-standing.css"],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "pt-BR",
+      "name": "Português (Brasil)",
+      "path": "lang/pt-BR.json"
+    }
+  ],
+  "socket": true,
+  "relationships": {
+    "systems": [
+      {
+        "id": "dnd5e",
+        "type": "system",
+        "compatibility": {
+          "minimum": "6.1.0"
+        }
+      }
+    ],
+    "recommends": [
+      {
+        "id": "tidy5e-sheet",
+        "type": "module",
+        "reason": "Adds the Relations tab to Tidy's character, party and NPC sheets.",
+        "compatibility": {
+          "minimum": "14.0.0"
+        }
+      }
+    ]
+  },
+  "readme": "README.md",
+  "url": "https://github.com/breno-hof/faction-standing",
+  "bugs": "https://github.com/breno-hof/faction-standing/issues",
+  "manifest": "https://github.com/breno-hof/faction-standing/releases/latest/download/module.json",
+  "download": "https://github.com/breno-hof/faction-standing/releases/latest/download/faction-standing.zip"
+}

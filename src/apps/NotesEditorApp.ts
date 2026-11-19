@@ -58,7 +58,7 @@ function getNotesClass(): any {
       const target = isFactionKey(this.key)
         ? getFaction(idFromKey(this.key))?.name
         : game.actors.get(idFromKey(this.key))?.name;
-      return t("TIDY_RENOWN.Notes.Title", { actor: actor?.name ?? "", target: target ?? "" });
+      return t("FACTION_STANDING.Notes.Title", { actor: actor?.name ?? "", target: target ?? "" });
     }
 
     async _prepareContext(options: any): Promise<any> {

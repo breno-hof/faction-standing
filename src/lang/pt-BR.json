@@ -1,6 +1,6 @@
 {
-  "TIDY_RENOWN": {
-    "TabTitle": "Renome",
+  "FACTION_STANDING": {
+    "TabTitle": "Relações",
     "Tab": {
       "PartyRenown": "renome do grupo",
       "Manage": "Gerenciar",
@@ -58,11 +58,11 @@
       "Description": "Descrição"
     },
     "Manager": {
-      "Title": "Grupos de Renome",
+      "Title": "Facções",
       "Open": "Abrir gerenciador",
-      "Hint": "Crie facções, organizações e comunidades, seus ranks e membros.",
-      "Button": "Renome",
-      "Intro": "Grupos rastreiam renome (DMG 2024). As listas de membros são calculadas a partir dos atores.",
+      "Hint": "Ranks, membros e pontuações dos atores de facção do mundo.",
+      "Button": "Facções",
+      "Intro": "Os grupos são atores de facção do dnd5e. A pontuação é a soma dos itens de renome de cada ator; este gerenciador acrescenta ranks, membros, notas e ajustes em lote.",
       "Recalc": "Recalcular disposição dos tokens",
       "NewFaction": "Novo grupo",
       "Counts": "{members} membros · {ranks} ranks",
@@ -85,7 +85,8 @@
       "NoRanks": "Nenhum rank ainda. Adicione um ou comece pelos limiares do DMG.",
       "Search": "Buscar pelo nome…",
       "AddActors": "Adicionar atores",
-      "NpcMember": "NPC · membro"
+      "NpcMember": "NPC · membro",
+      "OpenSheet": "Abrir a ficha da facção"
     },
     "Picker": {
       "Title": "Adicionar atores",
@@ -129,11 +130,14 @@
     },
     "Notify": {
       "NoGM": "Um mestre precisa estar conectado para alterar o renome.",
-      "Error": "Tidy Renown: não foi possível salvar a alteração. Veja o console para detalhes.",
-      "Recalculated": "Tidy Renown: {n} token(s) atualizado(s).",
+      "Error": "Faction Standing: não foi possível salvar a alteração. Veja o console para detalhes.",
+      "Recalculated": "Faction Standing: {n} token(s) atualizado(s).",
       "InvalidActor": "Apenas personagens, grupos e NPCs podem ser ligados a um grupo de renome.",
       "GMOnly": "Apenas o mestre pode gerenciar os grupos de renome.",
-      "TidyMissing": "O Tidy Renown exige que o Tidy 5e Sheets esteja ativo. O módulo foi desativado."
+      "Migrated": "Faction Standing: dados do Tidy Renown copiados ({settings} configuração(ões), {actors} ator(es), {tokens} token(s)).",
+      "RenownEnabled": "O Faction Standing ativou a opção de Renome do dnd5e para liberar atores de facção e itens de renome.",
+      "MigratedNative": "Faction Standing: {factions} grupo(s) convertido(s) em atores de facção, {items} item(ns) de renome criado(s) e {members} membro(s) adicionado(s).",
+      "ManualItemsKept": "{n} item(ns) de renome criado(s) à mão ainda apontam para esta facção. Apague-os na aba Renome do ator para remover a relação."
     },
     "Settings": {
       "PlayersCanIncrease": {
@@ -180,13 +184,19 @@
       "Conflict": "{n} grupo(s) deste arquivo já existem neste mundo. Sobrescrevê-los (os atores continuam vinculados) ou importá-los como cópias?",
       "Overwrite": "Sobrescrever",
       "Copy": "Importar como cópias",
-      "Invalid": "Tidy Renown: este arquivo não contém nenhum grupo.",
-      "Done": "Tidy Renown: {n} grupo(s) importado(s)."
+      "Invalid": "Faction Standing: este arquivo não contém nenhum grupo.",
+      "Done": "Faction Standing: {n} grupo(s) importado(s)."
     },
     "Export": {
       "All": "Exportar todos os grupos",
       "One": "Exportar este grupo",
       "Empty": "Não há grupos para exportar."
+    },
+    "Item": {
+      "Name": "Renome: {faction}"
+    },
+    "FactionSheet": {
+      "Manage": "Ranks e membros"
     }
   }
 }

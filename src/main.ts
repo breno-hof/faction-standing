@@ -1,5 +1,5 @@
 import { getManagerMenuType, openFactionManager } from "./apps/FactionManagerApp.js";
-import { MODULE_ID, TEMPLATES, TIDY_ID } from "./constants.js";
+import { MODULE_ID, TEMPLATES } from "./constants.js";
 import { getFactions } from "./data/factions.js";
 import { getMembers, invalidateMembershipIndex } from "./data/membership-index.js";
 import { getRelations } from "./data/renown.js";
@@ -8,22 +8,29 @@ import {
   recalculateAllDispositions,
   scheduleDispositionRecalc,
 } from "./services/disposition.js";
+import { LEGACY_ID, migrateLegacyData, migrateToNativeFactions } from "./migration.js";
+import { isFactionActor, RENOWN_ITEM_TYPE } from "./data/native.js";
+import { registerDnd5eTabs } from "./sheets/dnd5e-tabs.js";
+import {
+  ensureRenownEnabled,
+  registerFactionCategories,
+  registerFactionSheetControls,
+} from "./sheets/faction-sheet.js";
 import { registerSocket } from "./services/socket.js";
 import { registerSettings } from "./settings.js";
 import { registerTidyTabs } from "./tidy/register-tabs.js";
 import { rerenderRenownViews } from "./ui-refresh.js";
 
-function tidyActive(): boolean {
-  return !!game.modules.get(TIDY_ID)?.active;
-}
-
 Hooks.once("init", () => {
   registerSettings();
+  registerFactionCategories();
+  registerDnd5eTabs();
+  registerFactionSheetControls();
 
   game.settings.registerMenu(MODULE_ID, "manager", {
-    name: "TIDY_RENOWN.Manager.Title",
-    label: "TIDY_RENOWN.Manager.Open",
-    hint: "TIDY_RENOWN.Manager.Hint",
+    name: "FACTION_STANDING.Manager.Title",
+    label: "FACTION_STANDING.Manager.Open",
+    hint: "FACTION_STANDING.Manager.Hint",
     icon: "fa-solid fa-flag",
     type: getManagerMenuType(),
     restricted: true,
@@ -33,6 +40,7 @@ Hooks.once("init", () => {
 });
 
 // Fired by Tidy 5e Sheets when its API is ready; never fires if Tidy is inactive.
+// Tidy is optional: without it the manager, token dispositions and the API still work.
 Hooks.once("tidy5e-sheet.ready", (api: any) => {
   try {
     registerTidyTabs(api);
@@ -41,15 +49,7 @@ Hooks.once("tidy5e-sheet.ready", (api: any) => {
   }
 });
 
-Hooks.once("ready", () => {
-  if (!tidyActive()) {
-    ui.notifications.error(game.i18n.localize("TIDY_RENOWN.Notify.TidyMissing"), {
-      permanent: true,
-    });
-    console.error(`${MODULE_ID} | Tidy 5e Sheets is not active; the module is disabled.`);
-    return;
-  }
-
+Hooks.once("ready", async () => {
   registerSocket();
   registerDataHooks();
   registerDirectoryButton();
@@ -63,6 +63,18 @@ Hooks.once("ready", () => {
     computeNpcStanding,
     recalculateDispositions: () => recalculateAllDispositions(true),
   };
+
+  await ensureRenownEnabled();
+  try {
+    await migrateLegacyData();
+  } catch (err) {
+    console.error(`${MODULE_ID} | could not copy data from ${LEGACY_ID}`, err);
+  }
+  try {
+    await migrateToNativeFactions();
+  } catch (err) {
+    console.error(`${MODULE_ID} | could not convert factions to dnd5e faction actors`, err);
+  }
 
   ui.actors?.render();
   scheduleDispositionRecalc();
@@ -86,21 +98,24 @@ function registerDataHooks(): void {
 
   Hooks.on("createActor", onActorChange);
   Hooks.on("deleteActor", onActorChange);
-  Hooks.on("updateActor", (_actor: any, changes: any) => {
+  Hooks.on("updateActor", (actor: any, changes: any) => {
+    // Faction actors: name, identifier, ranks and members all feed the views.
+    if (isFactionActor(actor)) return onActorChange();
     const touchesRenown = foundry.utils.hasProperty(changes, `flags.${MODULE_ID}`);
     const touchesParty = foundry.utils.hasProperty(changes, "system.members");
     const touchesOwnership = "ownership" in (changes ?? {});
     if (touchesRenown || touchesParty || touchesOwnership) onActorChange();
   });
 
+  // Scores are renown items, whether this module or the GM changes them.
+  const onItemChange = (item: any) => {
+    if (item?.type === RENOWN_ITEM_TYPE && item.parent?.documentName === "Actor") onActorChange();
+  };
+  Hooks.on("createItem", onItemChange);
+  Hooks.on("updateItem", onItemChange);
+  Hooks.on("deleteItem", onItemChange);
+
   Hooks.on("createToken", () => scheduleDispositionRecalc());
-  Hooks.on("updateToken", (_token: any, changes: any) => {
-    // Unlinked tokens keep their own memberOf in the actor delta.
-    if (foundry.utils.hasProperty(changes, `delta.flags.${MODULE_ID}`)) {
-      scheduleViewsRefresh();
-      scheduleDispositionRecalc();
-    }
-  });
   Hooks.on("updateSetting", (setting: any) => {
     if (setting?.key === "dnd5e.primaryParty") onActorChange();
   });
@@ -115,7 +130,7 @@ function registerDirectoryButton(): void {
     const button = document.createElement("button");
     button.type = "button";
     button.className = `${MODULE_ID}-open`;
-    button.innerHTML = `<i class="fa-solid fa-flag" inert></i> ${game.i18n.localize("TIDY_RENOWN.Manager.Button")}`;
+    button.innerHTML = `<i class="fa-solid fa-flag" inert></i> ${game.i18n.localize("FACTION_STANDING.Manager.Button")}`;
     button.addEventListener("click", () => openFactionManager());
     actions.append(button);
   });

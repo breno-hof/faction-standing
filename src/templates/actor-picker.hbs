@@ -3,15 +3,15 @@
   {{#if empty}}
     <div class="tr-empty">
       <i class="fa-solid fa-users" inert></i>
-      <p>{{localize "TIDY_RENOWN.Picker.Empty"}}</p>
+      <p>{{localize "FACTION_STANDING.Picker.Empty"}}</p>
     </div>
   {{else}}
-    <input type="search" class="tr-search" data-tr-filter placeholder="{{localize "TIDY_RENOWN.Manager.Search"}}" aria-label="{{localize "TIDY_RENOWN.Manager.Search"}}" />
+    <input type="search" class="tr-search" data-tr-filter placeholder="{{localize "FACTION_STANDING.Manager.Search"}}" aria-label="{{localize "FACTION_STANDING.Manager.Search"}}" />
     <div class="tr-picker-list">
       {{#each folders}}
         <details class="tr-folder" open>
           <summary class="tr-folder-title">
-            <input type="checkbox" data-tr-folder-all aria-label="{{localize "TIDY_RENOWN.Picker.SelectFolder"}}" />
+            <input type="checkbox" data-tr-folder-all aria-label="{{localize "FACTION_STANDING.Picker.SelectFolder"}}" />
             <i class="fa-solid fa-folder tr-folder-closed" inert></i><i class="fa-solid fa-folder-open tr-folder-opened" inert></i>
             <span>{{name}}</span>
             <span class="tr-count">{{actors.length}}</span>
@@ -31,11 +31,11 @@
         </details>
       {{/each}}
     </div>
-    <p class="hint">{{localize "TIDY_RENOWN.Picker.Hint"}}</p>
+    <p class="hint">{{localize "FACTION_STANDING.Picker.Hint"}}</p>
   {{/if}}
 </div>
 <footer class="form-footer tr-dialog-footer">
-  <button type="button" data-action="cancel">{{localize "TIDY_RENOWN.Manager.Cancel"}}</button>
+  <button type="button" data-action="cancel">{{localize "FACTION_STANDING.Manager.Cancel"}}</button>
   {{#unless empty}}<button type="submit" class="tr-primary" disabled><i class="fa-solid fa-user-plus" inert></i> <span></span></button>{{/unless}}
 </footer>
 </div>

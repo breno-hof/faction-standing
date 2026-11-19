@@ -7,7 +7,7 @@ import { getFactionMap } from "../data/factions.js";
 import { getPartyContext } from "../data/party.js";
 import { getNpcFactionIds, getRelations, isNpc } from "../data/renown.js";
 import { dispositionFor, partyScoreTowardNpc } from "../data/rules.js";
-import type { Disposition } from "../data/types.js";
+import type { Disposition, Relations } from "../data/types.js";
 import { getSetting, getThresholds } from "../settings.js";
 
 const DEBOUNCE_MS = 250;
@@ -27,24 +27,31 @@ export interface NpcStanding {
   disposition: Disposition | null;
 }
 
+/** Party relations read once per recalculation, not once per token. */
+export interface StandingContext {
+  partyRelations: Relations | null;
+  characterRelations: Relations[];
+  known: Map<string, unknown>;
+}
+
+export function standingContext(): StandingContext {
+  const { party, characters } = getPartyContext();
+  return {
+    partyRelations: party ? getRelations(party) : null,
+    characterRelations: characters.map((c) => getRelations(c)),
+    known: getFactionMap(),
+  };
+}
+
 /**
  * Party score (S) and resulting disposition for an NPC actor (base or synthetic).
  * `npcId` is the world actor id, which is what individual relations refer to.
  */
-export function computeNpcStanding(
-  actor: any,
-  ctx = getPartyContext(),
-  known = getFactionMap(),
-): NpcStanding {
+export function computeNpcStanding(actor: any, ctx = standingContext()): NpcStanding {
   if (!isNpc(actor)) return { score: null, disposition: null };
   const npcId = actor.isToken ? (actor.token?.actorId ?? actor.id) : actor.id;
-  const factionIds = validFactionIds(actor, known);
-  const score = partyScoreTowardNpc(
-    ctx.party ? getRelations(ctx.party) : null,
-    ctx.characters.map((c) => getRelations(c)),
-    npcId,
-    factionIds,
-  );
+  const factionIds = validFactionIds(actor, ctx.known);
+  const score = partyScoreTowardNpc(ctx.partyRelations, ctx.characterRelations, npcId, factionIds);
   if (score == null) return { score: null, disposition: null };
   return { score, disposition: dispositionFor(score, getThresholds()) };
 }
@@ -69,15 +76,14 @@ export async function recalculateAllDispositions(force = false): Promise<number>
   if (!force && !canWrite()) return 0;
   if (force && !game.user.isGM) return 0;
 
-  const ctx = getPartyContext();
-  const known = getFactionMap();
+  const ctx = standingContext();
   let changes = 0;
 
   // Prototype tokens of world NPC actors.
   const actorUpdates: Record<string, unknown>[] = [];
   for (const actor of game.actors) {
     if (!isNpc(actor)) continue;
-    const { disposition } = computeNpcStanding(actor, ctx, known);
+    const { disposition } = computeNpcStanding(actor, ctx);
     if (!disposition) continue;
     const target = dispositionValue(disposition);
     if (shouldWrite(actor.prototypeToken, target)) {
@@ -95,7 +101,7 @@ export async function recalculateAllDispositions(force = false): Promise<number>
     for (const token of scene.tokens) {
       const actor = token.actor;
       if (!isNpc(actor)) continue;
-      const { disposition } = computeNpcStanding(actor, ctx, known);
+      const { disposition } = computeNpcStanding(actor, ctx);
       if (!disposition) continue;
       const target = dispositionValue(disposition);
       if (shouldWrite(token, target)) tokenUpdates.push({ _id: token.id, disposition: target });

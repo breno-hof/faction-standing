@@ -1,101 +1,72 @@
 name: Release
 
+# Push a tag like v2.0.0 (matching module.json) to publish a GitHub Release with
+# faction-standing.zip and module.json attached. Foundry installs and updates
+# from the releases/latest/download/module.json URL in module.json.
+# With the FOUNDRY_RELEASE_TOKEN secret set, the version is also registered on
+# the foundryvtt.com package page.
 on:
-  release:
-    types: [published]
+  push:
+    tags: ["v*.*.*"]
 
 permissions:
-  contents: write
-
-env:
-  MODULE_ID: tidy-renown
-  FOUNDRY_API: https://foundryvtt.com/_api/packages/release_version/
+  contents: read
 
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # create the release
+      id-token: write # OIDC identity for the provenance attestation
+      attestations: write
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: 26
 
-      - name: Extrair versão da tag
-        id: meta
-        run: |
-          TAG="${{ github.event.release.tag_name }}"
-          VERSION="${TAG#v}"
-          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+([-.][0-9A-Za-z.]+)?$ ]]; then
-            echo "::error::A tag '$TAG' não segue o formato vX.Y.Z"
-            exit 1
-          fi
-          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-
-      - name: Instalar dependências
-        run: |
-          if [ -f package-lock.json ]; then npm ci; else npm install --no-audit --no-fund; fi
-
-      - name: Verificar (tipos, lint, formatação, testes)
-        run: npm run check
-
-      - name: Build
-        run: npm run build
-
-      - name: Gerar module.json final
+      - name: Check tag matches module.json and package.json versions
         env:
-          VERSION: ${{ steps.meta.outputs.version }}
-          REPO_URL: https://github.com/${{ github.repository }}
-          MANIFEST: https://github.com/${{ github.repository }}/releases/latest/download/module.json
-          DOWNLOAD: https://github.com/${{ github.repository }}/releases/download/${{ steps.meta.outputs.tag }}/module.zip
+          TAG: ${{ github.ref_name }}
         run: |
-          jq --arg v "$VERSION" --arg m "$MANIFEST" --arg d "$DOWNLOAD" --arg u "$REPO_URL" \
-            '.version = $v | .manifest = $m | .download = $d
-             | .url = $u | .bugs = ($u + "/issues") | .readme = ($u + "#readme")' \
-            src/module.json > dist/module.json
-          cat dist/module.json
+          module_version="$(node -p "require('./module.json').version")"
+          package_version="$(node -p "require('./package.json').version")"
+          if ! [[ "$module_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error::module.json version '$module_version' is not valid semver"; exit 1
+          fi
+          if [[ "$TAG" != "v$module_version" || "$module_version" != "$package_version" ]]; then
+            echo "::error::tag $TAG, module.json $module_version and package.json $package_version must agree"; exit 1
+          fi
 
-      - name: Empacotar
-        run: |
-          cp LICENSE dist/ 2>/dev/null || true
-          cd dist && zip -r ../module.zip . -x '*.map'
+      - name: Install dependencies
+        run: if [[ -f package-lock.json ]]; then npm ci; else npm install; fi
 
-      - name: Anexar artefatos à Release
+      - run: npm run check
+
+      - name: Package
+        run: cd dist && zip -r ../faction-standing.zip .
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-path: faction-standing.zip
+
+      - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload "${{ steps.meta.outputs.tag }}" dist/module.json module.zip --clobber
-
-      - name: Montar payload da Package Release API
-        env:
-          VERSION: ${{ steps.meta.outputs.version }}
-          # Manifest da versão específica (não o /latest), como exige a API.
-          RELEASE_MANIFEST: https://github.com/${{ github.repository }}/releases/download/${{ steps.meta.outputs.tag }}/module.json
-          NOTES: ${{ github.event.release.html_url }}
+          TAG: ${{ github.ref_name }}
+        # A release made by hand in the GitHub UI for this tag gets the files attached
+        # instead of failing the run.
         run: |
-          jq -n \
-            --arg id "$MODULE_ID" \
-            --arg v "$VERSION" \
-            --arg m "$RELEASE_MANIFEST" \
-            --arg n "$NOTES" \
-            --argjson c "$(jq '.compatibility | {minimum, verified, maximum: (.maximum // "")}' dist/module.json)" \
-            '{id: $id, release: {version: $v, manifest: $m, notes: $n, compatibility: $c}}' \
-            > payload.json
-          cat payload.json
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" faction-standing.zip dist/module.json --clobber
+          else
+            gh release create "$TAG" faction-standing.zip dist/module.json --title "$TAG" --generate-notes --verify-tag
+          fi
 
-      # - name: Validar no Foundry (dry-run)
-      #   env:
-      #     FOUNDRY_TOKEN: ${{ secrets.FOUNDRY_PACKAGE_TOKEN }}
-      #   run: |
-      #     if [ -z "$FOUNDRY_TOKEN" ]; then
-      #       echo "::error::Secret FOUNDRY_PACKAGE_TOKEN não configurado"
-      #       exit 1
-      #     fi
-      #     jq '. + {"dry-run": true}' payload.json > payload-dry.json
-      #     bash ./.github/scripts/foundry-release.sh payload-dry.json
-
-      # - name: Publicar no Foundry
-      #   if: ${{ !github.event.release.prerelease }}
-      #   env:
-      #     FOUNDRY_TOKEN: ${{ secrets.FOUNDRY_PACKAGE_TOKEN }}
-      #   run: bash ./.github/scripts/foundry-release.sh payload.json
+      - name: Publish on foundryvtt.com
+        env:
+          FOUNDRY_RELEASE_TOKEN: ${{ secrets.FOUNDRY_RELEASE_TOKEN }}
+          TAG: ${{ github.ref_name }}
+          REPO: ${{ github.repository }}
+        run: node tools/foundry-release.mjs

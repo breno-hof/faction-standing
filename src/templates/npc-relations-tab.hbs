@@ -1,10 +1,10 @@
-{{#with tidyRenown}}
+{{#with factionStanding}}
 <section class="tr-tab">
   <header class="tr-tab-header">
-    <h3 class="tr-title"><i class="fa-solid fa-flag" inert></i> {{localize "TIDY_RENOWN.TabTitle"}}</h3>
+    <h3 class="tr-title"><i class="fa-solid fa-handshake" inert></i> {{localize "FACTION_STANDING.TabTitle"}}</h3>
     {{#if isGM}}
       <button type="button" class="button button-secondary" data-tr-action="manage">
-        <i class="fa-solid fa-gear" inert></i> {{localize "TIDY_RENOWN.Tab.Manage"}}
+        <i class="fa-solid fa-gear" inert></i> {{localize "FACTION_STANDING.Tab.Manage"}}
       </button>
     {{/if}}
   </header>
@@ -12,24 +12,24 @@
   <div class="tr-standing tr-standing-{{dispositionKey}}">
     {{#if hasStanding}}
       <div class="tr-standing-main">
-        <span class="tr-muted">{{localize "TIDY_RENOWN.Npc.PartyScore"}}</span>
+        <span class="tr-muted">{{localize "FACTION_STANDING.Npc.PartyScore"}}</span>
         <strong class="tr-standing-score">{{partyScore}}</strong>
         <span class="tr-pill tr-pill-{{dispositionKey}}">{{dispositionLabel}}</span>
       </div>
       <span class="tr-muted">{{thresholdsLabel}}</span>
     {{else}}
-      <span class="tr-muted">{{localize "TIDY_RENOWN.Npc.NoStanding"}}</span>
+      <span class="tr-muted">{{localize "FACTION_STANDING.Npc.NoStanding"}}</span>
     {{/if}}
     {{#if isGM}}
       <div class="tr-standing-controls">
-        {{#unless autoDisposition}}<span class="tr-muted">{{localize "TIDY_RENOWN.Npc.AutoOff"}}</span>{{/unless}}
-        {{#if locked}}<i class="fa-solid fa-lock tr-muted tr-locked-only" data-tooltip="{{localize "TIDY_RENOWN.Npc.Locked"}}" inert></i>{{/if}}
+        {{#unless autoDisposition}}<span class="tr-muted">{{localize "FACTION_STANDING.Npc.AutoOff"}}</span>{{/unless}}
+        {{#if locked}}<i class="fa-solid fa-lock tr-muted tr-locked-only" data-tooltip="{{localize "FACTION_STANDING.Npc.Locked"}}" inert></i>{{/if}}
         {{#if canEdit}}
         <span class="tr-contents tr-edit-only">
-        <button type="button" class="button button-icon-only button-borderless" data-tr-action="toggle-lock" data-locked="{{locked}}" data-tooltip="{{#if locked}}{{localize "TIDY_RENOWN.Npc.Unlock"}}{{else}}{{localize "TIDY_RENOWN.Npc.Lock"}}{{/if}}">
+        <button type="button" class="button button-icon-only button-borderless" data-tr-action="toggle-lock" data-locked="{{locked}}" data-tooltip="{{#if locked}}{{localize "FACTION_STANDING.Npc.Unlock"}}{{else}}{{localize "FACTION_STANDING.Npc.Lock"}}{{/if}}">
           <i class="fa-solid {{#if locked}}fa-lock{{else}}fa-lock-open{{/if}}" inert></i>
         </button>
-        <button type="button" class="button button-icon-only button-borderless" data-tr-action="recalc" data-tooltip="{{localize "TIDY_RENOWN.Manager.Recalc"}}">
+        <button type="button" class="button button-icon-only button-borderless" data-tr-action="recalc" data-tooltip="{{localize "FACTION_STANDING.Manager.Recalc"}}">
           <i class="fa-solid fa-rotate" inert></i>
         </button>
         </span>
@@ -38,7 +38,7 @@
     {{/if}}
   </div>
 
-  <h4 class="tr-section-title">{{localize "TIDY_RENOWN.Npc.MemberOf"}}</h4>
+  <h4 class="tr-section-title">{{localize "FACTION_STANDING.Npc.MemberOf"}}</h4>
   {{#if memberOf.length}}
     <ul class="tr-chips">
       {{#each memberOf}}
@@ -46,7 +46,7 @@
           {{#if img}}<img src="{{img}}" alt="" />{{else}}<i class="fa-solid fa-flag" inert></i>{{/if}}
           <span>{{name}}</span>
           {{#if ../canEdit}}
-            <button type="button" class="button button-icon-only button-borderless tr-edit-only" data-tr-action="npc-remove-faction" data-faction-id="{{id}}" data-tooltip="{{localize "TIDY_RENOWN.Npc.LeaveFaction"}}">
+            <button type="button" class="button button-icon-only button-borderless tr-edit-only" data-tr-action="npc-remove-faction" data-faction-id="{{id}}" data-tooltip="{{localize "FACTION_STANDING.Npc.LeaveFaction"}}">
               <i class="fa-solid fa-xmark" inert></i>
             </button>
           {{/if}}
@@ -54,23 +54,23 @@
       {{/each}}
     </ul>
   {{else}}
-    <p class="tr-muted">{{localize "TIDY_RENOWN.Npc.NoFactions"}}</p>
+    <p class="tr-muted">{{localize "FACTION_STANDING.Npc.NoFactions"}}</p>
   {{/if}}
 
   {{#if canEdit}}
     {{#if availableFactions.length}}
       <div class="tr-add-row tr-edit-only">
-        <select data-tr-select="npc-faction" aria-label="{{localize "TIDY_RENOWN.Npc.JoinFaction"}}">
+        <select data-tr-select="npc-faction" aria-label="{{localize "FACTION_STANDING.Npc.JoinFaction"}}">
           {{#each availableFactions}}<option value="{{id}}">{{name}}</option>{{/each}}
         </select>
         <button type="button" class="button" data-tr-action="npc-add-faction">
-          <i class="fa-solid fa-plus" inert></i> {{localize "TIDY_RENOWN.Npc.JoinFaction"}}
+          <i class="fa-solid fa-plus" inert></i> {{localize "FACTION_STANDING.Npc.JoinFaction"}}
         </button>
       </div>
     {{/if}}
   {{/if}}
 
-  <h4 class="tr-section-title">{{localize "TIDY_RENOWN.Npc.Relations"}}</h4>
+  <h4 class="tr-section-title">{{localize "FACTION_STANDING.Npc.Relations"}}</h4>
   {{#if hasRelations}}
     <ul class="tr-rows">
       {{#each relations}}
@@ -80,10 +80,10 @@
           {{#if ../canEdit}}
             <span class="tr-stepper tr-edit-only">
               <button type="button" class="button" data-tr-action="adjust" data-key="{{key}}" data-delta="-1" aria-label="−1">−</button>
-              <input type="number" step="1" value="{{score}}" data-tr-score data-key="{{key}}" aria-label="{{localize "TIDY_RENOWN.Tab.Score"}}" />
+              <input type="number" step="1" value="{{score}}" data-tr-score data-key="{{key}}" aria-label="{{localize "FACTION_STANDING.Tab.Score"}}" />
               <button type="button" class="button" data-tr-action="adjust" data-key="{{key}}" data-delta="1" aria-label="+1">+</button>
             </span>
-            <button type="button" class="button button-icon-only button-borderless tr-danger tr-edit-only" data-tr-action="remove" data-key="{{key}}" data-tooltip="{{localize "TIDY_RENOWN.Tab.RemoveRelation"}}">
+            <button type="button" class="button button-icon-only button-borderless tr-danger tr-edit-only" data-tr-action="remove" data-key="{{key}}" data-tooltip="{{localize "FACTION_STANDING.Tab.RemoveRelation"}}">
               <i class="fa-solid fa-xmark" inert></i>
             </button>
           {{/if}}
@@ -92,13 +92,13 @@
       {{/each}}
     </ul>
   {{else}}
-    <p class="tr-muted">{{localize "TIDY_RENOWN.Npc.NoRelations"}}</p>
+    <p class="tr-muted">{{localize "FACTION_STANDING.Npc.NoRelations"}}</p>
   {{/if}}
 
   {{#if canEdit}}
     {{#if availableCharacterFolders.length}}
       <div class="tr-add-row tr-edit-only">
-        <select data-tr-select="character" aria-label="{{localize "TIDY_RENOWN.Npc.AddRelation"}}">
+        <select data-tr-select="character" aria-label="{{localize "FACTION_STANDING.Npc.AddRelation"}}">
           {{#each availableCharacterFolders}}
             <optgroup label="{{name}}">
               {{#each actors}}<option value="{{id}}">{{name}}</option>{{/each}}
@@ -106,7 +106,7 @@
           {{/each}}
         </select>
         <button type="button" class="button" data-tr-action="npc-add-relation" data-npc-id="{{npcId}}">
-          <i class="fa-solid fa-plus" inert></i> {{localize "TIDY_RENOWN.Npc.AddRelation"}}
+          <i class="fa-solid fa-plus" inert></i> {{localize "FACTION_STANDING.Npc.AddRelation"}}
         </button>
       </div>
     {{/if}}
