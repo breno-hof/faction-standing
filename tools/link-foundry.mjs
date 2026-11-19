@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-// Creates a symlink from <Foundry Data>/modules/tidy-renown to ./dist for local development.
+// Creates a symlink from <Foundry Data>/modules/faction-standing to ./dist for local development.
 // Data path: FOUNDRY_DATA env var, or "dataPath" in foundryconfig.json (see foundryconfig.example.json).
 import { existsSync, lstatSync, mkdirSync, readFileSync, rmSync, symlinkSync } from "node:fs";
 import { join, resolve } from "node:path";
 
-const MODULE_ID = "tidy-renown";
+const MODULE_ID = "faction-standing";
 const root = resolve(import.meta.dirname, "..");
 const configPath = join(root, "foundryconfig.json");
 

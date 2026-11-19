@@ -1,20 +1,27 @@
 name: CI
 
 on:
+  pull_request:
   push:
     branches: [main]
-  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          node-version: 22
-      - name: Instalar dependências
-        run: |
-          if [ -f package-lock.json ]; then npm ci; else npm install --no-audit --no-fund; fi
+          node-version: 26
+      - name: Install dependencies
+        run: if [[ -f package-lock.json ]]; then npm ci; else npm install; fi
+      - name: Audit dependencies
+        run: npm audit --audit-level=moderate
       - run: npm run check
-      - run: npm run build

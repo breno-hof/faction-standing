@@ -3,6 +3,7 @@ import { notesToHtml } from "../apps/NotesEditorApp.js";
 import { SETTINGS } from "../constants.js";
 import { getFactionMap, getFactions } from "../data/factions.js";
 import { groupByFolder } from "../data/folders.js";
+import { kindLabel } from "../data/kinds.js";
 import { getNpcIndividualRelations } from "../data/membership-index.js";
 import { getNpcFactionIds, getRelations, isNpc } from "../data/renown.js";
 import {
@@ -24,11 +25,11 @@ const t = (key: string, data?: Record<string, unknown>): string =>
 
 export function rankLabel(rank: RankDef | null): string {
   if (!rank) return "";
-  return rank.name || t("TIDY_RENOWN.Rank.Unnamed", { score: rank.minScore });
+  return rank.name || t("FACTION_STANDING.Rank.Unnamed", { score: rank.minScore });
 }
 
-function kindLabel(faction: FactionDef): string {
-  return t(`TIDY_RENOWN.Faction.Kind.${faction.kind}`);
+function factionKindLabel(faction: FactionDef): string {
+  return kindLabel(faction.kind);
 }
 
 /** `<optgroup>`-ready actor choices, grouped like the Actors sidebar. */
@@ -36,7 +37,7 @@ function actorOptions(actors: any[]) {
   return groupByFolder(
     actors.map((a) => ({ id: a.id, name: a.name, actor: a })),
     (row) => row.actor,
-    t("TIDY_RENOWN.Manager.UnfiledActors"),
+    t("FACTION_STANDING.Manager.UnfiledActors"),
   ).map((folder) => ({
     name: folder.name,
     actors: folder.actors.map(({ id, name }) => ({ id, name })),
@@ -58,7 +59,9 @@ function permissions(actor: any) {
     canEdit: isGM,
     canIncrease: !isGM && playersCanIncrease && !!actor.isOwner,
     gmOnline,
-    increaseTooltip: gmOnline ? t("TIDY_RENOWN.Tab.IncreaseHint") : t("TIDY_RENOWN.Notify.NoGM"),
+    increaseTooltip: gmOnline
+      ? t("FACTION_STANDING.Tab.IncreaseHint")
+      : t("FACTION_STANDING.Notify.NoGM"),
   };
 }
 
@@ -103,7 +106,7 @@ export async function buildScoreHolderContext(actor: any) {
             name: faction.name,
             img: faction.img,
             color: faction.color,
-            kindLabel: kindLabel(faction),
+            kindLabel: factionKindLabel(faction),
             descriptionHtml,
             score: entry.score,
             member: !!entry.member,
@@ -116,7 +119,7 @@ export async function buildScoreHolderContext(actor: any) {
             negative: progress.negative,
             rankName: rankLabel(rank),
             nextLabel: next
-              ? t("TIDY_RENOWN.Tab.NextRank", { rank: rankLabel(next), score: next.minScore })
+              ? t("FACTION_STANDING.Tab.NextRank", { rank: rankLabel(next), score: next.minScore })
               : "",
             benefits,
             atCap: faction.cap != null && entry.score >= faction.cap,
@@ -132,7 +135,7 @@ export async function buildScoreHolderContext(actor: any) {
       return {
         key,
         npcId: idFromKey(key),
-        name: npc?.name ?? t("TIDY_RENOWN.Tab.MissingNpc"),
+        name: npc?.name ?? t("FACTION_STANDING.Tab.MissingNpc"),
         img: npc?.img ?? "icons/svg/mystery-man.svg",
         missing: !npc,
         score: entry.score,
@@ -165,9 +168,9 @@ export async function buildScoreHolderContext(actor: any) {
 }
 
 const DISPOSITION_LABELS = {
-  hostile: "TIDY_RENOWN.Disposition.hostile",
-  neutral: "TIDY_RENOWN.Disposition.neutral",
-  friendly: "TIDY_RENOWN.Disposition.friendly",
+  hostile: "FACTION_STANDING.Disposition.hostile",
+  neutral: "FACTION_STANDING.Disposition.neutral",
+  friendly: "FACTION_STANDING.Disposition.friendly",
 } as const;
 
 /** Context for NPC sheets. */
@@ -180,7 +183,7 @@ export function buildNpcContext(actor: any) {
     .filter((id) => factions.has(id))
     .map((id) => {
       const f = factions.get(id)!;
-      return { id, name: f.name, img: f.img, color: f.color, kindLabel: kindLabel(f) };
+      return { id, name: f.name, img: f.img, color: f.color, kindLabel: factionKindLabel(f) };
     });
 
   const relations = getNpcIndividualRelations(npcId).map((r) => ({
@@ -209,7 +212,7 @@ export function buildNpcContext(actor: any) {
     hasStanding: standing.score != null,
     dispositionKey: standing.disposition ?? "",
     dispositionLabel: standing.disposition ? t(DISPOSITION_LABELS[standing.disposition]) : "",
-    thresholdsLabel: t("TIDY_RENOWN.Npc.Thresholds", thresholds),
+    thresholdsLabel: t("FACTION_STANDING.Npc.Thresholds", thresholds),
     autoDisposition: !!getSetting<boolean>(SETTINGS.autoDisposition),
     locked: isNpcDispositionLocked(actor),
     availableFactions: canEdit

@@ -1,6 +1,6 @@
 {
-  "TIDY_RENOWN": {
-    "TabTitle": "Renown",
+  "FACTION_STANDING": {
+    "TabTitle": "Relations",
     "Tab": {
       "PartyRenown": "party renown",
       "Manage": "Manage",
@@ -58,11 +58,11 @@
       "Description": "Description"
     },
     "Manager": {
-      "Title": "Renown Groups",
+      "Title": "Factions",
       "Open": "Open manager",
-      "Hint": "Create factions, organizations and communities, their ranks and members.",
-      "Button": "Renown",
-      "Intro": "Groups track renown (DMG 2024). Membership lists are calculated from actors.",
+      "Hint": "Ranks, members and scores of the world’s faction actors.",
+      "Button": "Factions",
+      "Intro": "Groups are dnd5e faction actors. Scores are the renown items on each actor; this manager adds ranks, members, notes and bulk changes.",
       "Recalc": "Recalculate token dispositions",
       "NewFaction": "New group",
       "Counts": "{members} members · {ranks} ranks",
@@ -85,7 +85,8 @@
       "NoRanks": "No ranks yet. Add one or start from the DMG thresholds.",
       "Search": "Search by name…",
       "AddActors": "Add actors",
-      "NpcMember": "NPC · member"
+      "NpcMember": "NPC · member",
+      "OpenSheet": "Open the faction sheet"
     },
     "Picker": {
       "Title": "Add actors",
@@ -129,11 +130,14 @@
     },
     "Notify": {
       "NoGM": "A GM must be connected to change renown.",
-      "Error": "Tidy Renown: the change could not be saved. See the console for details.",
-      "Recalculated": "Tidy Renown: {n} token(s) updated.",
+      "Error": "Faction Standing: the change could not be saved. See the console for details.",
+      "Recalculated": "Faction Standing: {n} token(s) updated.",
       "InvalidActor": "Only characters, parties and NPCs can be linked to a group.",
       "GMOnly": "Only a GM can manage renown groups.",
-      "TidyMissing": "Tidy Renown requires Tidy 5e Sheets to be active. The module is disabled."
+      "Migrated": "Faction Standing: copied data from Tidy Renown ({settings} setting(s), {actors} actor(s), {tokens} token(s)).",
+      "RenownEnabled": "Faction Standing turned on dnd5e’s Renown setting so faction actors and renown items are available.",
+      "MigratedNative": "Faction Standing: converted {factions} group(s) to faction actors, created {items} renown item(s) and added {members} member(s).",
+      "ManualItemsKept": "{n} renown item(s) created by hand still point to this faction. Delete them on the actor’s Renown tab to remove the relation."
     },
     "Settings": {
       "PlayersCanIncrease": {
@@ -180,13 +184,19 @@
       "Conflict": "{n} group(s) in this file already exist in this world. Overwrite them (actors stay linked) or import them as copies?",
       "Overwrite": "Overwrite",
       "Copy": "Import as copies",
-      "Invalid": "Tidy Renown: this file does not contain any groups.",
-      "Done": "Tidy Renown: {n} group(s) imported."
+      "Invalid": "Faction Standing: this file does not contain any groups.",
+      "Done": "Faction Standing: {n} group(s) imported."
     },
     "Export": {
       "All": "Export all groups",
       "One": "Export this group",
       "Empty": "There are no groups to export."
+    },
+    "Item": {
+      "Name": "Renown: {faction}"
+    },
+    "FactionSheet": {
+      "Manage": "Ranks & members"
     }
   }
 }

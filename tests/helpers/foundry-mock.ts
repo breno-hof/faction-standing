@@ -1,7 +1,9 @@
 /**
- * A tiny in-memory stand-in for the parts of Foundry VTT the module touches.
+ * A tiny in-memory stand-in for the parts of Foundry VTT and dnd5e 6.1 the
+ * module touches: actors (including `faction` actors), embedded renown items,
+ * scenes and tokens, settings, sockets and the v14 `_del` update operator.
  * It is enough to exercise data writes, the membership index, disposition
- * recalculation and socket validation without a running Foundry server.
+ * recalculation, migrations and socket validation without a running Foundry.
  */
 
 type Fn = (...args: any[]) => unknown;
@@ -28,6 +30,30 @@ function deleteProperty(obj: any, path: string): void {
   if (parent) delete parent[last];
 }
 
+/** Stand-in for Foundry v14's `_del` operator. */
+export const DEL = Symbol("_del");
+
+const isPlainObject = (v: unknown): v is Record<string, any> =>
+  !!v &&
+  typeof v === "object" &&
+  !Array.isArray(v) &&
+  Object.getPrototypeOf(v) === Object.prototype;
+
+/** Foundry-style update of one path: objects merge, `_del` deletes, arrays replace. */
+function applyUpdate(obj: any, path: string, value: unknown): void {
+  if (value === DEL) return deleteProperty(obj, path);
+  if (isPlainObject(value)) {
+    const current = getProperty(obj, path);
+    if (!isPlainObject(current)) setProperty(obj, path, {});
+    for (const [k, v] of Object.entries(value)) applyUpdate(obj, `${path}.${k}`, v);
+    return;
+  }
+  setProperty(obj, path, value);
+}
+
+let docCounter = 0;
+const nextId = () => `doc${++docCounter}`;
+
 class Collection<T extends { id: string }> extends Array<T> {
   get(id: string | undefined): T | undefined {
     return this.find((x) => x.id === id);
@@ -36,8 +62,36 @@ class Collection<T extends { id: string }> extends Array<T> {
 
 const hooks = new Map<string, Fn[]>();
 
+export class FakeItem {
+  documentName = "Item";
+  id: string;
+  type: string;
+  name: string;
+  img = "icons/svg/item-bag.svg";
+  system: any;
+  flags: Record<string, any>;
+  parent: FakeActor;
+
+  constructor(parent: FakeActor, data: any) {
+    this.parent = parent;
+    this.id = data._id ?? nextId();
+    this.type = data.type;
+    this.name = data.name;
+    if (data.img) this.img = data.img;
+    this.system = structuredClone(data.system ?? {});
+    this.flags = structuredClone(data.flags ?? {});
+  }
+
+  async update(data: Record<string, unknown>): Promise<this> {
+    for (const [k, v] of Object.entries(data)) if (k !== "_id") applyUpdate(this, k, v);
+    emit("updateItem", this, data);
+    return this;
+  }
+}
+
 export class FakeActor {
   documentName = "Actor";
+  items = new Collection<FakeItem>();
   flags: Record<string, any> = {};
   prototypeToken: any = { disposition: 0, flags: {} };
   system: any = {};
@@ -57,6 +111,37 @@ export class FakeActor {
 
   get uuid(): string {
     return `Actor.${this.id}`;
+  }
+  get identifier(): string {
+    return this.system.identifier ?? "";
+  }
+  get itemTypes(): Record<string, FakeItem[]> {
+    const out: Record<string, FakeItem[]> = {};
+    for (const item of this.items) (out[item.type] ??= []).push(item);
+    return out;
+  }
+  async createEmbeddedDocuments(_type: string, data: any[]): Promise<FakeItem[]> {
+    const created = data.map((d) => new FakeItem(this, d));
+    for (const item of created) {
+      this.items.push(item);
+      emit("createItem", item);
+    }
+    return created;
+  }
+  async deleteEmbeddedDocuments(_type: string, ids: string[]): Promise<void> {
+    for (const id of ids) {
+      const index = this.items.findIndex((i) => i.id === id);
+      if (index < 0) continue;
+      const [item] = this.items.splice(index, 1);
+      emit("deleteItem", item);
+    }
+  }
+  async delete(): Promise<this> {
+    const actors = (globalThis as any).game.actors as FakeActor[];
+    const index = actors.indexOf(this);
+    if (index >= 0) actors.splice(index, 1);
+    emit("deleteActor", this);
+    return this;
   }
   get hasPlayerOwner(): boolean {
     return this.owners.length > 0;
@@ -83,7 +168,7 @@ export class FakeActor {
     return this;
   }
   async update(data: Record<string, unknown>): Promise<this> {
-    for (const [k, v] of Object.entries(data)) if (k !== "_id") setProperty(this, k, v);
+    for (const [k, v] of Object.entries(data)) if (k !== "_id") applyUpdate(this, k, v);
     emit("updateActor", this, data);
     return this;
   }
@@ -216,10 +301,27 @@ export function installFoundryMock(): MockWorld {
       return true;
     },
   };
+  g._del = DEL;
+  g.CONFIG = {
+    Actor: {
+      dataModels: { faction: {}, character: {}, npc: {}, group: {} },
+      documentClass: { DEFAULT_ICON: "icons/svg/mystery-man.svg" },
+    },
+    DND5E: { factionCategories: {} },
+  };
   g.Actor = {
     implementation: {
       async updateDocuments(updates: Record<string, any>[]) {
         for (const u of updates) await actors.get(u._id)!.update(u);
+      },
+      async create(data: any) {
+        const actor = new FakeActor({ id: data._id ?? nextId(), type: data.type, name: data.name });
+        if (data.img) actor.img = data.img;
+        actor.system = structuredClone(data.system ?? {});
+        actor.flags = structuredClone(data.flags ?? {});
+        actors.push(actor);
+        emit("createActor", actor);
+        return actor;
       },
     },
   };

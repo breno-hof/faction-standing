@@ -1,5 +1,5 @@
 /**
- * Tidy 5e Sheets integration through the official API only (SPEC 5.2).
+ * Relations tab on Tidy 5e Sheets, through the official API only (SPEC 5.2).
  * Tabs: character, party (group) and NPC.
  */
 import { MODULE_ID, SETTINGS, TEMPLATES } from "../constants.js";
@@ -14,8 +14,8 @@ function actorFrom(context: any): any {
 export function registerTidyTabs(api: any): void {
   const scoreHolderTab = (tabId: string) =>
     new api.models.HandlebarsTab({
-      title: "TIDY_RENOWN.TabTitle",
-      iconClass: "fa-solid fa-flag",
+      title: "FACTION_STANDING.TabTitle",
+      iconClass: "fa-solid fa-handshake",
       tabId,
       path: `/${TEMPLATES.actorTab}`,
       tabContentsClasses: [`${MODULE_ID}-tab`],
@@ -23,7 +23,7 @@ export function registerTidyTabs(api: any): void {
         const actor = actorFrom(context);
         return {
           ...context,
-          tidyRenown: actor ? await buildScoreHolderContext(actor) : null,
+          factionStanding: actor ? await buildScoreHolderContext(actor) : null,
         };
       },
       onRender: (params: any) => bindRenownControls(params.tabContentsElement, params.app),
@@ -34,8 +34,8 @@ export function registerTidyTabs(api: any): void {
 
   api.registerNpcTab(
     new api.models.HandlebarsTab({
-      title: "TIDY_RENOWN.TabTitle",
-      iconClass: "fa-solid fa-flag",
+      title: "FACTION_STANDING.TabTitle",
+      iconClass: "fa-solid fa-handshake",
       tabId: `${MODULE_ID}-npc`,
       path: `/${TEMPLATES.npcTab}`,
       tabContentsClasses: [`${MODULE_ID}-tab`],
@@ -44,7 +44,7 @@ export function registerTidyTabs(api: any): void {
         const actor = actorFrom(context);
         return {
           ...context,
-          tidyRenown: actor ? buildNpcContext(actor) : null,
+          factionStanding: actor ? buildNpcContext(actor) : null,
         };
       },
       onRender: (params: any) => bindRenownControls(params.tabContentsElement, params.app),

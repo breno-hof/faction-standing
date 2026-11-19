@@ -1,90 +1,125 @@
-# Tidy Renown – Facções & Reputação
+# Faction Standing
 
-Módulo para **Foundry VTT v14** e **dnd5e 6.x** que implementa a regra opcional de **Renown** do
-_Dungeon Master's Guide_ (2024), integrada ao **Tidy 5e Sheets** (dependência obrigatória).
+A **Foundry VTT v14** module for **dnd5e 6.1+** that fills the gaps in the system's own renown
+support (the optional **Renown** rule from the 2024 _Dungeon Master's Guide_) and adds relations with
+NPCs and automatic token disposition. It works on the default dnd5e sheets and, optionally, on
+**Tidy 5e Sheets**.
 
-A especificação completa está em [`SPEC.md`](SPEC.md).
+Formerly **Tidy Renown** (id `tidy-renown`). See [Coming from Tidy Renown](#coming-from-tidy-renown).
 
-## Funcionalidades
+The full specification is in [`SPEC.md`](SPEC.md).
 
-- **Grupos** (facção, organização ou comunidade) com descrição, imagem, cor, escala da barra, teto
-  opcional e ranks próprios. O botão "Usar limiares do DMG" cria os limiares 3, 10 e 50 com os
-  benefícios sugeridos pelo livro (só texto, sem automação). O gerenciador mostra os grupos numa barra
-  lateral e cada grupo em abas (Detalhes, Ranks, Membros); descrições usam o editor formatado do Foundry e ranks são criados e
-  editados em uma janela própria.
-- **Importar/exportar grupos** em JSON pelo gerenciador (todos ou só o selecionado). Ao importar um
-  grupo que já existe no mundo, o mestre escolhe entre sobrescrever (os atores continuam vinculados) ou
-  importar como cópia. Só as definições são exportadas; as pontuações ficam nos atores.
-- **Renome por personagem ou pela party** (ator `group` do dnd5e), separado por grupo. Membros
-  nunca ficam abaixo de 0 (regra do DMG); não membros e relações individuais com NPCs podem ficar
-  negativos (extensão do módulo).
-- **Membros calculados em runtime** a partir das flags dos atores; nada é duplicado no grupo.
-- **Abas "Renome" no Tidy** para personagem, party e NPC, registradas pela API oficial do Tidy. Os
-  controles de edição do mestre só aparecem com a ficha destravada (modo de edição do Tidy); travada, a
-  aba é só leitura. Benefícios, descrição e notas de cada grupo ficam em painéis separados.
-- **Disposição automática dos tokens** (extensão do módulo): NPCs ficam Hostis abaixo de −10 e
-  Amigáveis acima de 10 (limiares configuráveis), conforme a pontuação da party com os grupos do NPC
-  ou com o próprio NPC. Tokens Secret ou travados não mudam.
-- **Só o mestre edita.** Opcionalmente (desligado por padrão), jogadores podem pedir +1 nos próprios
-  personagens; o pedido vai por socket e o mestre ativo valida antes de gravar.
-- **i18n** em `en` e `pt-BR`.
+## How it fits dnd5e's renown
 
-## Uso rápido (mestre)
+dnd5e 6.1 stores renown like this, and the module uses exactly that data:
 
-1. Abra o gerenciador pelo botão **Renome** no diretório de atores, pelas configurações do módulo
-   ou pelo botão **Gerenciar** na aba Renome.
-2. Clique em **Novo grupo**, dê um nome e, se quiser, **Usar limiares do DMG**.
-3. Na aba **Membros**, clique em **Adicionar atores** (seletor organizado por pasta, com busca e
-   seleção da pasta inteira) ou arraste atores da barra lateral; ajuste a pontuação com − / +.
-   Marque vários atores (ou a pasta inteira) para somar, subtrair ou mudar a associação de todos de
-   uma vez.
-4. As notas do mestre de cada relação usam o editor formatado (botão de nota na aba Membros ou em
-   "Detalhes" na ficha). Donos do ator leem as notas; blocos Secretos ficam visíveis só ao mestre.
+| In dnd5e                            | What Faction Standing does with it                                         |
+| ----------------------------------- | -------------------------------------------------------------------------- |
+| **Faction** actor                   | It is the group. The manager edits its name, image, category, description. |
+| Faction `ranks` (no UI in dnd5e)    | Rank editor with threshold, name and benefits text.                        |
+| Faction `members`                   | Member list (characters and NPCs), with a folder picker and bulk changes.  |
+| **Renown** items on an actor        | The score is their total. − / + changes one "Renown: <Faction>" item.      |
+| Faction categories (empty in dnd5e) | Registers Faction, Organization and Community if the world has none.       |
+| The sheet's **Renown** tab          | Unchanged. The module's tab is called **Relations** and sits next to it.   |
 
-API para macros: `game.modules.get("tidy-renown").api` expõe `openManager`, `getFactions`,
-`getMembers`, `getRelations`, `computeNpcStanding` e `recalculateDispositions`.
+Renown items made by hand (say, "+2 Harbor job") count toward the score as usual. The module only
+ever changes the one item it created for each faction.
 
-## Desenvolvimento
+Module-only features: individual relations with NPCs, GM notes per relation, a floor of 0 for members
+and an optional cap on the changes it makes, progress bar color and scale, bulk changes, player +1
+requests and automatic token disposition.
 
-Requisitos: Node 22+.
+When the world loads, the module turns on dnd5e's Renown setting (without it, the system hides faction
+actors and renown items) and tells the GM.
+
+## Features
+
+- **Faction manager** with a sidebar and Details, Ranks and Members tabs. Faction sheets get a
+  **Ranks & members** button that opens the manager on that faction.
+- **Ranks** with a renown threshold, name and description. "Use DMG thresholds" adds 3, 10 and 50.
+- **Relations tab** on dnd5e and Tidy sheets (character, party, NPC): current and next rank, benefits
+  reached, notes and relations with NPCs. GM controls show while the sheet is in edit mode.
+- **Party:** the group actor can have a score and be a "member" (dnd5e only accepts creatures as
+  members, so the party's membership is kept in a module flag).
+- **Automatic token disposition:** NPCs turn Hostile below −10 and Friendly above 10 (configurable),
+  based on the party's score with the NPC's factions or with the NPC itself. Secret or locked tokens
+  are left alone.
+- **Only the GM edits.** Optionally, players can ask for +1; the active GM validates and applies it.
+- **Import/export** factions as JSON (importing creates faction actors).
+- **Localized** in English and Brazilian Portuguese.
+
+## Quick start (GM)
+
+1. Click **Factions** in the Actors directory (or **Ranks & members** on a faction sheet).
+2. **New group** creates a faction actor. Under **Ranks**, use **Use DMG thresholds** or add your own.
+3. Under **Members**, add actors (folder picker, or drag them from the sidebar) and adjust with − / +.
+   Tick several to add, subtract or change membership for all of them at once.
+4. Notes for each relation: the note button on the Members tab or on the sheet's Relations tab.
+
+Macro API: `game.modules.get("faction-standing").api` exposes `openManager`, `getFactions`,
+`getMembers`, `getRelations`, `computeNpcStanding` and `recalculateDispositions`.
+
+## Coming from Tidy Renown
+
+The id changed from `tidy-renown` to `faction-standing`, so Foundry treats it as a different module:
+
+1. Install **Faction Standing** from the manifest below (or from Foundry's module list).
+2. In your world, enable Faction Standing and disable Tidy Renown.
+3. Log in as GM. The first time, the module copies the data from the old id and then converts it to
+   dnd5e renown: each group becomes a faction actor, each score becomes a renown item on the actor
+   and memberships become faction members. It tells you how much it converted. The old data is not
+   deleted.
+
+The same conversion runs once for worlds that used the pre-integration 2.0 data. Compendiums are not
+converted.
+
+Group files exported by Tidy Renown can still be imported.
+
+Manifest: `https://github.com/breno-hof/faction-standing/releases/latest/download/module.json`
+
+## Development
+
+Requires Node 22+ (CI uses Node 26).
 
 ```bash
-npm install            # gera o package-lock.json (faça commit dele)
-npm run build:watch    # build contínuo em dist/
-npm run link           # symlink de dist/ para <Data>/modules/tidy-renown
-npm run check          # tipos, lint, formatação, i18n e testes
+npm ci                 # install dependencies from package-lock.json
+npm run dev            # rebuild dist/ on change, with source maps
+npm run link           # symlink dist/ to <Data>/modules/faction-standing
+npm run check          # types, lint, formatting, i18n, tests and build
 ```
 
-`npm run link` lê o caminho de dados do Foundry da variável `FOUNDRY_DATA` ou de
-`foundryconfig.json` (veja `foundryconfig.example.json`).
+`npm run link` reads the Foundry data path from the `FOUNDRY_DATA` environment variable or from
+`foundryconfig.json` (see `foundryconfig.example.json`).
 
-### Estrutura
+### Layout
 
-| Caminho                         | Conteúdo                                                          |
-| ------------------------------- | ----------------------------------------------------------------- |
-| `src/data/rules.ts`             | Regras puras (piso, teto, ranks, pontuação da party, disposição). |
-| `src/data/renown.ts`            | Leitura e escrita das flags dos atores.                           |
-| `src/data/membership-index.ts`  | Listas de membros em runtime.                                     |
-| `src/services/disposition.ts`   | Disposição automática dos tokens.                                 |
-| `src/services/socket.ts`        | Pedidos de +1 dos jogadores.                                      |
-| `src/tidy/`                     | Abas do Tidy (contexto, eventos, registro).                       |
-| `src/apps/FactionManagerApp.ts` | Gerenciador de grupos (ApplicationV2).                            |
-| `tests/`                        | Testes de regras e de integração com um mock do Foundry.          |
+| Path                            | Contents                                                           |
+| ------------------------------- | ------------------------------------------------------------------ |
+| `module.json`                   | Source manifest; the build writes `dist/module.json`.              |
+| `build.mjs`                     | esbuild build (script and CSS carry the version in the file name). |
+| `src/data/rules.ts`             | Pure rules (floor, cap, ranks, renown totals, disposition).        |
+| `src/data/native.ts`            | Access to dnd5e renown data (factions, renown items, members).     |
+| `src/data/factions.ts`          | Faction actors as groups (ranks, flags, import/export).            |
+| `src/data/renown.ts`            | Scores (renown items), membership, notes and NPC relations.        |
+| `src/data/membership-index.ts`  | Runtime lookups (who relates to each faction and NPC).             |
+| `src/sheets/`                   | Relations tab on dnd5e sheets and the faction sheet button.        |
+| `src/services/disposition.ts`   | Automatic token disposition.                                       |
+| `src/services/socket.ts`        | Player +1 requests.                                                |
+| `src/migration.ts`              | Migration from `tidy-renown` and conversion to dnd5e renown.       |
+| `src/tidy/`                     | Relations tab context, events and Tidy registration.               |
+| `src/apps/FactionManagerApp.ts` | Faction manager (ApplicationV2).                                   |
+| `tests/`                        | Rule tests and integration tests against a Foundry mock.           |
 
-## Publicação
+## Releasing
 
-A cada **Release** publicada no GitHub com tag `vX.Y.Z`, o workflow `release.yml`:
+1. Bump `version` in both `module.json` and `package.json` (they must match) and commit.
+2. `git tag vX.Y.Z && git push origin vX.Y.Z`.
 
-1. roda `npm run check` e `npm run build`;
-2. gera o `module.json` final (`manifest` → `/releases/latest/…`, `download` → zip da tag);
-3. anexa `module.json` e `module.zip` à Release;
-4. valida na **Package Release API** do Foundry com `dry-run`;
-5. publica a versão no site do Foundry (pula prereleases).
+The `release.yml` workflow checks the versions, runs `npm run check`, zips `dist/` into
+`faction-standing.zip`, attests its provenance, creates the GitHub Release with the zip and
+`module.json`, and registers the version on foundryvtt.com.
 
-Antes da primeira release:
-
-1. Crie o pacote `tidy-renown` no site do Foundry (submissão inicial manual).
-2. Copie o **Package Release Token** (começa com `fvttp_`) da página do pacote.
-3. Salve-o no GitHub em _Settings → Secrets and variables → Actions_ como `FOUNDRY_PACKAGE_TOKEN`.
-4. Confira `compatibility.verified` em `src/module.json` com o build do Foundry v14 testado e a
-   versão mínima do Tidy em `relationships.requires`.
+Registration on foundryvtt.com needs the `FOUNDRY_RELEASE_TOKEN` secret (the package page's _Package
+Release Token_, starting with `fvttp_`) under _Settings → Secrets and variables → Actions_. Without it
+the step is skipped and the GitHub Release still goes out. To validate without publishing:
+`FOUNDRY_RELEASE_TOKEN=fvttp_... npm run release:dry-run`.

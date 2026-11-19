@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Verifies that every TIDY_RENOWN.* key used in src/ exists in every language
+// Verifies that every FACTION_STANDING.* key used in src/ exists in every language
 // file, that language files have identical key sets, and that Handlebars
 // block helpers in templates are balanced.
 import { readdirSync, readFileSync, statSync } from "node:fs";
@@ -40,9 +40,9 @@ const files = walk(src).filter((f) => /\.(ts|hbs)$/.test(f));
 const used = new Set();
 for (const file of files) {
   const text = readFileSync(file, "utf8");
-  for (const m of text.matchAll(/["'`](TIDY_RENOWN\.[A-Za-z0-9_.]+?)(["'`]|\$\{)/g)) {
+  for (const m of text.matchAll(/["'`](FACTION_STANDING\.[A-Za-z0-9_.]+?)(["'`]|\$\{)/g)) {
     const key = m[1];
-    // Keys built at runtime (`TIDY_RENOWN.Faction.Kind.${kind}`) are checked by prefix.
+    // Keys built at runtime (`FACTION_STANDING.Faction.Kind.${kind}`) are checked by prefix.
     if (m[2] === "${") {
       const prefix = key;
       for (const [lang, keys] of Object.entries(langs)) {

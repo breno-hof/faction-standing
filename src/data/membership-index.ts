@@ -1,9 +1,12 @@
 /**
- * Runtime membership lists (2.4, RF-07). Nothing is persisted on factions;
- * this index is rebuilt lazily from actor flags and invalidated by actor hooks.
+ * Runtime lookups over the world's renown data: who has a relation with each
+ * faction (renown items, memberships, notes), which NPCs belong to it (the
+ * faction actor's members) and who has an individual relation with each NPC.
+ * Rebuilt lazily and invalidated by actor and renown item hooks.
  */
 import { NPC_PREFIX } from "../constants.js";
-import { getNpcFactionIds, getRelations, isNpc, isScoreHolder } from "./renown.js";
+import { factionActors, memberUuids } from "./native.js";
+import { getRelations, isNpc, isScoreHolder } from "./renown.js";
 import { idFromKey, isFactionKey } from "./rules.js";
 import type { RelationEntry } from "./types.js";
 
@@ -41,14 +44,20 @@ function build(): MembershipIndex {
     npcRelations: new Map(),
   };
   for (const actor of game.actors) {
-    if (isScoreHolder(actor)) {
-      for (const [key, entry] of Object.entries(getRelations(actor))) {
-        if (isFactionKey(key)) push(index.factionRelations, idFromKey(key), { actor, key, entry });
-        else if (key.startsWith(NPC_PREFIX))
-          push(index.npcRelations, idFromKey(key), { actor, key, entry });
-      }
-    } else if (isNpc(actor)) {
-      for (const id of getNpcFactionIds(actor)) push(index.factionNpcs, id, actor);
+    if (!isScoreHolder(actor)) continue;
+    for (const [key, entry] of Object.entries(getRelations(actor))) {
+      if (isFactionKey(key)) push(index.factionRelations, idFromKey(key), { actor, key, entry });
+      else if (key.startsWith(NPC_PREFIX))
+        push(index.npcRelations, idFromKey(key), { actor, key, entry });
+    }
+  }
+  // NPC members are listed by uuid on the faction; only world NPCs are shown here.
+  const byUuid = new Map<string, any>();
+  for (const actor of game.actors) if (isNpc(actor)) byUuid.set(actor.uuid, actor);
+  for (const faction of factionActors()) {
+    for (const uuid of memberUuids(faction)) {
+      const npc = byUuid.get(uuid);
+      if (npc) push(index.factionNpcs, faction.id, npc);
     }
   }
   const byName = (a: { actor?: any; name?: string }, b: { actor?: any; name?: string }) =>

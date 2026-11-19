@@ -19,3 +19,6 @@ declare const Hooks: {
   callAll(hook: string, ...args: unknown[]): boolean;
 };
 declare function fromUuidSync(uuid: string, options?: Record<string, unknown>): any;
+/** Foundry v14 update operators: delete a key / replace an object wholesale. */
+declare const _del: unknown;
+declare function _replace(value: unknown): unknown;

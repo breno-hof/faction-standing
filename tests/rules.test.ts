@@ -13,8 +13,11 @@ import {
   partyScoreTowardNpc,
   progressOf,
   reachedRanks,
+  renownTotal,
   scoreTowardNpc,
+  uniqueIdentifier,
   withMembership,
+  withModifierDelta,
 } from "../src/data/rules.js";
 import type { RankDef, Relations } from "../src/data/types.js";
 
@@ -164,7 +167,7 @@ describe("normalizeFaction", () => {
     const f = normalizeFaction({
       id: "x",
       name: "  Guild ",
-      kind: "bogus" as never,
+      kind: "  " as never,
       progressMax: 0,
       cap: "" as never,
       ranks: { 0: { id: "r2", name: "B", minScore: "10" }, 1: { id: "r1", minScore: 3 } } as never,
@@ -202,7 +205,7 @@ describe("faction import / export", () => {
 
   it("round-trips an export file", () => {
     const file = JSON.parse(JSON.stringify(buildFactionExport([faction])));
-    assert.equal(file.format, "tidy-renown.factions");
+    assert.equal(file.format, "faction-standing.factions");
     assert.deepEqual(parseFactionExport(file, makeId), [faction]);
   });
   it("accepts a bare array or the raw setting map, filling missing ids", () => {
@@ -218,5 +221,37 @@ describe("faction import / export", () => {
     assert.throws(() => parseFactionExport({ foo: 1 }, makeId));
     assert.throws(() => parseFactionExport("nope", makeId));
     assert.throws(() => parseFactionExport({ factions: [] }, makeId));
+  });
+});
+
+describe("dnd5e renown helpers", () => {
+  it("builds unique dnd5e-style identifiers", () => {
+    assert.equal(uniqueIdentifier("Ordem da Mão Rubra", new Set()), "ordem-da-mao-rubra");
+    assert.equal(uniqueIdentifier("Guild", new Set(["guild", "guild-2"])), "guild-3");
+    assert.equal(uniqueIdentifier("!!!", new Set()), "faction");
+  });
+
+  it("totals modifiers for one faction across items", () => {
+    const items = [
+      {
+        modifiers: [
+          { faction: "a", value: 2 },
+          { faction: "b", value: 5 },
+        ],
+      },
+      { modifiers: [{ faction: "a", value: -3 }] },
+    ];
+    assert.equal(renownTotal(items, "a"), -1);
+    assert.equal(renownTotal(items, "c"), 0);
+  });
+
+  it("adds a delta to the faction's modifier or appends one", () => {
+    assert.deepEqual(withModifierDelta([{ faction: "a", value: 1 }], "a", 2), [
+      { faction: "a", value: 3 },
+    ]);
+    assert.deepEqual(withModifierDelta([{ faction: "a", value: 1 }], "b", -1), [
+      { faction: "a", value: 1 },
+      { faction: "b", value: -1 },
+    ]);
   });
 });

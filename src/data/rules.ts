@@ -129,12 +129,13 @@ export function dispositionFor(
 
 /** Normalizes an untrusted faction object (settings data, form input). */
 export function normalizeFaction(raw: Partial<FactionDef> & { id: string }): FactionDef {
-  const kind = raw.kind === "organization" || raw.kind === "community" ? raw.kind : "faction";
+  const kind = typeof raw.kind === "string" && raw.kind.trim() ? raw.kind.trim() : "faction";
   const progressMax = Number(raw.progressMax);
   const cap = raw.cap == null || (raw.cap as unknown) === "" ? null : Number(raw.cap);
   const ranks = Array.isArray(raw.ranks) ? raw.ranks : Object.values(raw.ranks ?? {});
   return {
     id: raw.id,
+    identifier: String(raw.identifier ?? "").trim(),
     name: String(raw.name ?? "").trim(),
     kind,
     description: raw.description ? String(raw.description) : "",
@@ -157,6 +158,60 @@ export function normalizeFaction(raw: Partial<FactionDef> & { id: string }): Fac
         })),
     ),
   };
+}
+
+/**
+ * dnd5e-style identifier (lowercase, dashes) for a faction name, made unique
+ * against `taken` by appending -2, -3… Falls back to "faction".
+ */
+export function uniqueIdentifier(name: string, taken: ReadonlySet<string>): string {
+  const base =
+    name
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "") || "faction";
+  let id = base;
+  for (let n = 2; taken.has(id); n++) id = `${base}-${n}`;
+  return id;
+}
+
+/** A renown item's modifiers, as stored by dnd5e (`system.modifiers`). */
+export interface RenownModifier {
+  faction: string;
+  value: number;
+}
+
+/** Sum of the modifiers for `identifier` across renown items (dnd5e's own total). */
+export function renownTotal(
+  items: ReadonlyArray<{ modifiers: readonly RenownModifier[] }>,
+  identifier: string,
+): number {
+  let total = 0;
+  for (const item of items) {
+    for (const mod of item.modifiers) {
+      if (mod.faction === identifier && Number.isFinite(Number(mod.value)))
+        total += Number(mod.value);
+    }
+  }
+  return total;
+}
+
+/**
+ * Modifiers of the managed item after adding `delta` for `identifier`:
+ * the existing modifier for that faction absorbs it, or a new one is appended.
+ */
+export function withModifierDelta(
+  modifiers: readonly RenownModifier[],
+  identifier: string,
+  delta: number,
+): RenownModifier[] {
+  const next = modifiers.map((m) => ({ faction: m.faction, value: Number(m.value) || 0 }));
+  const own = next.find((m) => m.faction === identifier);
+  if (own) own.value += delta;
+  else next.push({ faction: identifier, value: delta });
+  return next;
 }
 
 /** Applies a membership toggle to an entry (2.5): joining lifts negatives to 0. */
@@ -184,7 +239,7 @@ export function canPlayerIncrease(opts: {
 }
 
 /** Envelope written by "Export groups" so other worlds can recognize the file. */
-export const FACTION_EXPORT_FORMAT = "tidy-renown.factions";
+export const FACTION_EXPORT_FORMAT = "faction-standing.factions";
 export const FACTION_EXPORT_VERSION = 1;
 
 export interface FactionExport {

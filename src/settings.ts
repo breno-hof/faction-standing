@@ -1,24 +1,21 @@
 import { MODULE_ID, SETTINGS } from "./constants.js";
-import { invalidateMembershipIndex } from "./data/membership-index.js";
 import { scheduleDispositionRecalc } from "./services/disposition.js";
 import { rerenderRenownViews } from "./ui-refresh.js";
 
 export function registerSettings(): void {
+  registerInternalSettings();
+
+  // Pre-2.0 faction definitions; only read by the migration to dnd5e faction actors.
   game.settings.register(MODULE_ID, SETTINGS.factions, {
     scope: "world",
     config: false,
     type: Object,
     default: {},
-    onChange: () => {
-      invalidateMembershipIndex();
-      rerenderRenownViews();
-      scheduleDispositionRecalc();
-    },
   });
 
   game.settings.register(MODULE_ID, SETTINGS.playersCanIncrease, {
-    name: "TIDY_RENOWN.Settings.PlayersCanIncrease.Name",
-    hint: "TIDY_RENOWN.Settings.PlayersCanIncrease.Hint",
+    name: "FACTION_STANDING.Settings.PlayersCanIncrease.Name",
+    hint: "FACTION_STANDING.Settings.PlayersCanIncrease.Hint",
     scope: "world",
     config: true,
     type: Boolean,
@@ -27,8 +24,8 @@ export function registerSettings(): void {
   });
 
   game.settings.register(MODULE_ID, SETTINGS.autoDisposition, {
-    name: "TIDY_RENOWN.Settings.AutoDisposition.Name",
-    hint: "TIDY_RENOWN.Settings.AutoDisposition.Hint",
+    name: "FACTION_STANDING.Settings.AutoDisposition.Name",
+    hint: "FACTION_STANDING.Settings.AutoDisposition.Hint",
     scope: "world",
     config: true,
     type: Boolean,
@@ -37,8 +34,8 @@ export function registerSettings(): void {
   });
 
   game.settings.register(MODULE_ID, SETTINGS.hostileThreshold, {
-    name: "TIDY_RENOWN.Settings.HostileThreshold.Name",
-    hint: "TIDY_RENOWN.Settings.HostileThreshold.Hint",
+    name: "FACTION_STANDING.Settings.HostileThreshold.Name",
+    hint: "FACTION_STANDING.Settings.HostileThreshold.Hint",
     scope: "world",
     config: true,
     type: Number,
@@ -50,8 +47,8 @@ export function registerSettings(): void {
   });
 
   game.settings.register(MODULE_ID, SETTINGS.friendlyThreshold, {
-    name: "TIDY_RENOWN.Settings.FriendlyThreshold.Name",
-    hint: "TIDY_RENOWN.Settings.FriendlyThreshold.Hint",
+    name: "FACTION_STANDING.Settings.FriendlyThreshold.Name",
+    hint: "FACTION_STANDING.Settings.FriendlyThreshold.Hint",
     scope: "world",
     config: true,
     type: Number,
@@ -63,14 +60,25 @@ export function registerSettings(): void {
   });
 
   game.settings.register(MODULE_ID, SETTINGS.showNpcRelationsToPlayers, {
-    name: "TIDY_RENOWN.Settings.ShowNpcRelations.Name",
-    hint: "TIDY_RENOWN.Settings.ShowNpcRelations.Hint",
+    name: "FACTION_STANDING.Settings.ShowNpcRelations.Name",
+    hint: "FACTION_STANDING.Settings.ShowNpcRelations.Hint",
     scope: "world",
     config: true,
     type: Boolean,
     default: false,
     onChange: () => rerenderRenownViews(),
   });
+}
+
+export function registerInternalSettings(): void {
+  for (const key of [SETTINGS.legacyMigrated, SETTINGS.nativeMigrated]) {
+    game.settings.register(MODULE_ID, key, {
+      scope: "world",
+      config: false,
+      type: Boolean,
+      default: false,
+    });
+  }
 }
 
 export function getSetting<T = unknown>(key: (typeof SETTINGS)[keyof typeof SETTINGS]): T {

@@ -1,0 +1,6 @@
+{{! Relations tab as a dnd5e sheet part. Outside edit mode the GM controls are hidden by the same CSS that follows Tidy's sheet lock. }}
+<section class="tab {{tab.cssClass}} faction-standing-sheet-tab{{#unless editable}} sheet-mode-play{{/unless}}" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+  <div class="faction-standing-tab">
+    {{> (lookup this "factionStandingTemplate") }}
+  </div>
+</section>

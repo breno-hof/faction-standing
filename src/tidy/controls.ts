@@ -38,7 +38,7 @@ async function guarded(fn: () => Promise<unknown>): Promise<void> {
     await fn();
   } catch (err) {
     console.error(err);
-    ui.notifications.error(game.i18n.localize("TIDY_RENOWN.Notify.Error"));
+    ui.notifications.error(game.i18n.localize("FACTION_STANDING.Notify.Error"));
   }
 }
 
@@ -129,7 +129,14 @@ async function onAction(el: HTMLElement, root: HTMLElement, sheet: any): Promise
     case "toggle-member":
       return guarded(() => setMember(actor, factionId, el.dataset.member !== "true"));
     case "remove":
-      return guarded(() => removeRelation(actor, key));
+      return guarded(async () => {
+        const kept = await removeRelation(actor, key);
+        if (kept) {
+          ui.notifications.info(
+            game.i18n.format("FACTION_STANDING.Notify.ManualItemsKept", { n: kept }),
+          );
+        }
+      });
     case "edit-notes":
       openNotesEditor(actor, key);
       return;
@@ -162,7 +169,7 @@ async function onAction(el: HTMLElement, root: HTMLElement, sheet: any): Promise
     case "recalc":
       return guarded(async () => {
         const n = await recalculateAllDispositions(true);
-        ui.notifications.info(game.i18n.format("TIDY_RENOWN.Notify.Recalculated", { n }));
+        ui.notifications.info(game.i18n.format("FACTION_STANDING.Notify.Recalculated", { n }));
       });
   }
 }
