@@ -1,6 +1,6 @@
 {
   "name": "faction-standing",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "private": true,
   "description": "Renown, faction standing and NPC relations for Foundry VTT v14 + dnd5e 6.x.",
   "type": "module",

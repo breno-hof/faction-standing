@@ -2,7 +2,7 @@
   "id": "faction-standing",
   "title": "Faction Standing",
   "description": "Faction relations for D&D 5e on top of dnd5e's own renown: ranks and members for faction actors, quick and bulk score changes, individual relations with NPCs and token disposition that follows the party's standing.",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "authors": [
     {
       "name": "breno-hof",
