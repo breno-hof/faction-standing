@@ -1130,10 +1130,18 @@
 
 /* ---------- Relations tab on the dnd5e sheets ---------- */
 
+/*
+ * dnd5e's card/faint colors are light-only values, which left the cards white
+ * on dark sheets. Surfaces and borders are mixed from the sheet's own text
+ * color instead, so they follow whichever theme the sheet is using.
+ */
 .faction-standing-sheet-tab .faction-standing-tab {
+  --tr-text: var(--color-text-primary, currentColor);
+  --tr-muted: var(--color-text-secondary, color-mix(in srgb, var(--tr-text) 65%, transparent));
   --tr-accent: var(--dnd5e-color-gold, var(--color-warm-2, currentColor));
   --tr-gold: var(--dnd5e-color-gold, var(--tr-accent));
-  --tr-border: var(--dnd5e-color-faint, var(--color-border, currentColor));
-  --tr-card: var(--dnd5e-color-card, color-mix(in srgb, currentColor 5%, transparent));
+  --tr-border: color-mix(in srgb, var(--tr-text) 25%, transparent);
+  --tr-card: color-mix(in srgb, var(--tr-text) 5%, transparent);
+  --tr-field: color-mix(in srgb, var(--tr-text) 4%, transparent);
   padding: 0.5rem 0.75rem 1rem;
 }

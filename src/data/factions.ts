@@ -262,15 +262,22 @@ export function exportFactions(factions: FactionDef[] = getFactions()): void {
   );
 }
 
-/** Browser download without relying on Foundry's (moved/deprecated) file helpers. */
+/**
+ * Saves text as a file. Prefers Foundry's own helper, which also works in the
+ * desktop app. The fallback keeps the link out of the document: a link added
+ * to the page reaches Foundry's global link handling, which opens it in a new
+ * window instead of downloading it.
+ */
 function downloadText(text: string, type: string, filename: string): void {
-  const url = URL.createObjectURL(new Blob([text], { type }));
+  const save = foundry.utils?.saveDataToFile;
+  if (typeof save === "function") {
+    save(text, type, filename);
+    return;
+  }
+  const url = URL.createObjectURL(new Blob([text], { type: "application/octet-stream" }));
   const link = document.createElement("a");
   link.href = url;
   link.download = filename;
-  link.hidden = true;
-  document.body.append(link);
-  link.click();
-  link.remove();
+  link.dispatchEvent(new MouseEvent("click", { bubbles: false, cancelable: true, view: window }));
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
